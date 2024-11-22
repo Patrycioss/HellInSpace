@@ -16,12 +16,9 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
   final Vector2 _position;
   final double _radius = 10;
   final double _impulseForce = 10000;
-
-  int lives = 3;
-
   final double hitCooldown = 1;
 
-
+  int lives = 3;
 
   Player(this._position, sprites)
       : super(renderBody: false, children: [
@@ -57,9 +54,6 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
 
   @override
   void beginContact(Object other, Contact contact) {
-    print("ja");
-
-
     // TODO: implement beginContact
     super.beginContact(other, contact);
   }

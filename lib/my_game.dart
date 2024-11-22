@@ -23,9 +23,10 @@ class MyGame extends Forge2DGame
     player = Player(Vector2(50, 50), spriteFinder.findSprites('player'));
 
     healthBar = HealthBar(
-        spriteFinder.findSprite('heart_empty'),
-        spriteFinder.findSprite('heart_half'),
-        spriteFinder.findSprite('heart_full'));
+      7,
+      Vector2(20, 20),
+      spriteFinder.findSprites('heart'),
+    );
 
     // Load enemy sprites
     testEnemy = Enemy(Vector2(300, 300));
