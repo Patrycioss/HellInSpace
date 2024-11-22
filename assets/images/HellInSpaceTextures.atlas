@@ -1,0 +1,6 @@
+HellInSpaceTextures.png
+size:128,128
+filter:Linear,Linear
+repeat:none
+player
+bounds:2,2,64,64

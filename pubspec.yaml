@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flame: ^1.21.0
   flame_forge2d: ^0.18.2+1
+  flame_texturepacker: ^4.1.2
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/images/HellInSpaceTextures.atlas
+    - assets/images/HellInSpaceTextures.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
