@@ -4,7 +4,7 @@ import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/services.dart';
 
-class Player extends BodyComponent with KeyboardHandler {
+class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
   final Map<LogicalKeyboardKey, bool> _pressedKeys = {
     LogicalKeyboardKey.keyW: false,
     LogicalKeyboardKey.keyA: false,
@@ -17,9 +17,18 @@ class Player extends BodyComponent with KeyboardHandler {
   final double _radius = 10;
   final double _impulseForce = 10000;
 
-  Player(this._position, sprite)
+  int lives = 3;
+
+  final double hitCooldown = 1;
+
+
+
+  Player(this._position, sprites)
       : super(renderBody: false, children: [
-          _PlayerSpriteComponent(sprite),
+          _PlayerSpriteComponent(
+            SpriteAnimation.spriteList(sprites, stepTime: 0.2)
+
+          ),
         ]);
 
   @override
@@ -35,6 +44,7 @@ class Player extends BodyComponent with KeyboardHandler {
       position: _position,
       type: _bodyType,
       linearDamping: 0.6,
+      userData: this,
     );
 
     final massData = MassData();
@@ -43,6 +53,15 @@ class Player extends BodyComponent with KeyboardHandler {
     return world.createBody(bodyDef)
       ..createFixture(fixtureDef)
       ..setMassData(massData);
+  }
+
+  @override
+  void beginContact(Object other, Contact contact) {
+    print("ja");
+
+
+    // TODO: implement beginContact
+    super.beginContact(other, contact);
   }
 
   @override
@@ -86,6 +105,9 @@ class Player extends BodyComponent with KeyboardHandler {
   }
 }
 
-class _PlayerSpriteComponent extends SpriteComponent {
-  _PlayerSpriteComponent(sprite) : super(anchor: Anchor.center, sprite: sprite);
+class _PlayerSpriteComponent extends SpriteAnimationComponent {
+  _PlayerSpriteComponent(SpriteAnimation animation) : super(
+    animation: animation,
+    anchor: Anchor.center,
+  );
 }
