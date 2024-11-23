@@ -16,16 +16,31 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
   final Vector2 _position;
   final double _radius = 10;
   final double _impulseForce = 10000;
+  final Function(int) _onHealthChangeCallback;
+  final int _maxHealth;
 
-  int lives = 3;
+  int _health = 0;
 
-  Player(this._position, sprites)
+  set health(int value) {
+    if (value <= 0) {
+      _health = 0;
+      _onHealthChangeCallback(_health);
+      _onDeath();
+    } else {
+      _health = value > _maxHealth ? _maxHealth : value;
+      _onHealthChangeCallback(_health);
+    }
+  }
+
+  int get health => _health;
+
+  Player(this._maxHealth, this._position, sprites, this._onHealthChangeCallback)
       : super(renderBody: false, children: [
           _PlayerSpriteComponent(
-            SpriteAnimation.spriteList(sprites, stepTime: 0.2)
-
-          ),
-        ]);
+              SpriteAnimation.spriteList(sprites, stepTime: 0.2)),
+        ]) {
+    health = _maxHealth;
+  }
 
   @override
   Body createBody() {
@@ -53,14 +68,22 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
 
   @override
   void beginContact(Object other, Contact contact) {
-    // TODO: implement beginContact
+// TODO: implement beginContact
     super.beginContact(other, contact);
   }
+
+  void _onDeath() {}
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     for (LogicalKeyboardKey key in _pressedKeys.keys) {
       _pressedKeys[key] = keysPressed.contains(key);
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.minus)) {
+        health--;
+    } else if (keysPressed.contains(LogicalKeyboardKey.add)) {
+        health++;
     }
 
     return super.onKeyEvent(event, keysPressed);
@@ -88,8 +111,8 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
 
     body.applyLinearImpulse(direction * _impulseForce * dt);
 
-    double targetAngle = atan2(body.linearVelocity.y, body.linearVelocity.x) +
-        (0.5 * pi);
+    double targetAngle =
+        atan2(body.linearVelocity.y, body.linearVelocity.x) + (0.5 * pi);
 
     body.setTransform(body.position, targetAngle);
     body.angularVelocity = 0;
@@ -99,8 +122,9 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
 }
 
 class _PlayerSpriteComponent extends SpriteAnimationComponent {
-  _PlayerSpriteComponent(SpriteAnimation animation) : super(
-    animation: animation,
-    anchor: Anchor.center,
-  );
+  _PlayerSpriteComponent(SpriteAnimation animation)
+      : super(
+          animation: animation,
+          anchor: Anchor.center,
+        );
 }

@@ -1,5 +1,4 @@
 import 'package:flame/components.dart';
-import 'package:flutter/services.dart';
 
 class HealthBar extends PositionComponent with KeyboardHandler {
   final int _maxHealth;
@@ -8,14 +7,10 @@ class HealthBar extends PositionComponent with KeyboardHandler {
   final List<Sprite> _sprites;
   final List<_HeartVisual> _hearts = [];
 
-  int _currentHealth = 0;
-
   HealthBar(this._maxHealth, Vector2 position, this._sprites)
       : super(
           position: position,
-        ) {
-    _currentHealth = _maxHealth;
-  }
+        );
 
   @override
   Future<void> onLoad() async {
@@ -23,28 +18,13 @@ class HealthBar extends PositionComponent with KeyboardHandler {
       _hearts.add(_HeartVisual(Vector2(_gapBetweenHearts * i, 0), _heartScale));
       add(_hearts.last);
     }
-    _updateHealthVisuals();
+    updateHealthBar(_maxHealth);
 
     return super.onLoad();
   }
 
-  @override
-  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (keysPressed.contains(LogicalKeyboardKey.keyT)) {
-      setHealth(_currentHealth - 1);
-    }
-    // TODO: implement onKeyEvent
-    return super.onKeyEvent(event, keysPressed);
-  }
-
-  void setHealth(int health) {
-    print("Setting health from: $_currentHealth to $health");
-    _currentHealth = health;
-    _updateHealthVisuals();
-  }
-
-  void _updateHealthVisuals() {
-    int healthPool = _currentHealth;
+  void updateHealthBar(int health) {
+    int healthPool = health;
 
     for (int i = 0; i < _hearts.length; i++) {
       healthPool -= 2;

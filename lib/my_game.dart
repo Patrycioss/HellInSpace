@@ -10,6 +10,8 @@ import 'sprite_loader.dart';
 
 class MyGame extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
+  final int _maxPlayerHealth = 7;
+
   late SpriteFinder _spriteFinder;
   late HealthBar _healthBar;
   late Player _player;
@@ -20,13 +22,17 @@ class MyGame extends Forge2DGame
     _spriteFinder =
         SpriteFinder(await atlasFromAssets('HellInSpaceTextures.atlas'));
 
-    _player = Player(Vector2(50, 50), _spriteFinder.findSprites('player'));
-
     _healthBar = HealthBar(
-      7,
+      _maxPlayerHealth,
       Vector2(20, 20),
       _spriteFinder.findSprites('heart'),
     );
+
+    _player = Player(
+        _maxPlayerHealth,
+        Vector2(50, 50),
+        _spriteFinder.findSprites('player'),
+            (int health) => _healthBar.updateHealthBar(health));
 
     // Load enemy sprites
     _testEnemy = Enemy(Vector2(300, 300));
