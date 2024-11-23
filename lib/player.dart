@@ -16,7 +16,6 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
   final Vector2 _position;
   final double _radius = 10;
   final double _impulseForce = 10000;
-  final double hitCooldown = 1;
 
   int lives = 3;
 

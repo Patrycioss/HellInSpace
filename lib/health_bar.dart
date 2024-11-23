@@ -2,27 +2,25 @@ import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 
 class HealthBar extends PositionComponent with KeyboardHandler {
-  final List<Sprite> sprites;
-
-  final int _maxHealth; // Should be divisible by 2
-  final double gapBetweenHearts = 40;
-  final double heartScale = 4;
-
+  final int _maxHealth;
+  final double _gapBetweenHearts = 40;
+  final double _heartScale = 4;
+  final List<Sprite> _sprites;
   final List<_HeartVisual> _hearts = [];
 
-  int currentHealth = 0;
+  int _currentHealth = 0;
 
-  HealthBar(this._maxHealth, Vector2 position, this.sprites)
+  HealthBar(this._maxHealth, Vector2 position, this._sprites)
       : super(
           position: position,
         ) {
-    currentHealth = _maxHealth;
+    _currentHealth = _maxHealth;
   }
 
   @override
   Future<void> onLoad() async {
     for (int i = 0; i < (_maxHealth / 2).ceil(); i++) {
-      _hearts.add(_HeartVisual(Vector2(gapBetweenHearts * i, 0), heartScale));
+      _hearts.add(_HeartVisual(Vector2(_gapBetweenHearts * i, 0), _heartScale));
       add(_hearts.last);
     }
     _updateHealthVisuals();
@@ -33,34 +31,31 @@ class HealthBar extends PositionComponent with KeyboardHandler {
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.keyT)) {
-      setHealth(currentHealth - 1);
-      //
-      // final heart = children.last as _HeartVisual;
-      // heart.sprite = sprites[1];
+      setHealth(_currentHealth - 1);
     }
     // TODO: implement onKeyEvent
     return super.onKeyEvent(event, keysPressed);
   }
 
   void setHealth(int health) {
-    currentHealth = health;
-    print("Current Health: $currentHealth");
+    print("Setting health from: $_currentHealth to $health");
+    _currentHealth = health;
     _updateHealthVisuals();
   }
 
   void _updateHealthVisuals() {
-    int healthPool = currentHealth;
+    int healthPool = _currentHealth;
 
     for (int i = 0; i < _hearts.length; i++) {
       healthPool -= 2;
       if (healthPool < 0) {
-        if (healthPool == -1) {
-          _hearts[i].sprite = sprites[1];
+        if (healthPool < -1) {
+          _hearts[i].sprite = _sprites[0];
         } else {
-          _hearts[i].sprite = sprites[0];
+          _hearts[i].sprite = _sprites[1];
         }
       } else {
-        _hearts[i].sprite = sprites[2];
+        _hearts[i].sprite = _sprites[2];
       }
     }
   }

@@ -10,30 +10,30 @@ import 'sprite_loader.dart';
 
 class MyGame extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
-  late SpriteFinder spriteFinder;
-  late HealthBar healthBar;
-  late Player player;
-  late Enemy testEnemy;
+  late SpriteFinder _spriteFinder;
+  late HealthBar _healthBar;
+  late Player _player;
+  late Enemy _testEnemy;
 
   @override
   Future<void> onLoad() async {
-    spriteFinder =
+    _spriteFinder =
         SpriteFinder(await atlasFromAssets('HellInSpaceTextures.atlas'));
 
-    player = Player(Vector2(50, 50), spriteFinder.findSprites('player'));
+    _player = Player(Vector2(50, 50), _spriteFinder.findSprites('player'));
 
-    healthBar = HealthBar(
+    _healthBar = HealthBar(
       7,
       Vector2(20, 20),
-      spriteFinder.findSprites('heart'),
+      _spriteFinder.findSprites('heart'),
     );
 
     // Load enemy sprites
-    testEnemy = Enemy(Vector2(300, 300));
+    _testEnemy = Enemy(Vector2(300, 300));
 
     world.gravity = Vector2.zero();
-    add(healthBar);
-    add(player);
-    add(testEnemy);
+    add(_healthBar);
+    add(_player);
+    add(_testEnemy);
   }
 }

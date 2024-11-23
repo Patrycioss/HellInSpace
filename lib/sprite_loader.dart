@@ -1,17 +1,17 @@
 import 'package:flame_texturepacker/flame_texturepacker.dart';
 
 class SpriteFinder {
-  final TexturePackerAtlas atlas;
+  final TexturePackerAtlas _atlas;
 
-  SpriteFinder(this.atlas);
+  SpriteFinder(this._atlas);
 
   TexturePackerSprite findSprite(String name){
-    final sprite = atlas.findSpriteByName(name);
+    final sprite = _atlas.findSpriteByName(name);
     assert(sprite != null);
     return sprite!;
   }
 
   List<TexturePackerSprite> findSprites(String name){
-    return atlas.findSpritesByName(name);
+    return _atlas.findSpritesByName(name);
   }
 }
