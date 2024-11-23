@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flame/game.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
@@ -10,12 +8,8 @@ import 'game.dart';
 
 class HellInSpaceGame extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection {
-  late final RouterComponent _router;
-
-  late final Enemy _testEnemy;
-  late final SpriteFinder _spriteFinder;
-
   late final PlayerBloc playerBloc;
+  late final SpriteFinder _spriteFinder;
 
   @override
   Future<void> onLoad() async {
@@ -34,14 +28,13 @@ class HellInSpaceGame extends Forge2DGame
       )
     ], children: [
       Player(
-        GameSettings.maxPlayerHealth,
         Vector2(50, 50),
         _spriteFinder.findSprites('player'),
       ),
       Enemy(
-        Vector2(300,300),
+        Vector2(300, 300),
       ),
-      HealthBar(GameSettings.maxPlayerHealth, Vector2(20, 20),
+      HealthBar(Vector2(20, 20),
           _spriteFinder.findSprites('heart')),
       EndGameBehaviour(),
     ]));

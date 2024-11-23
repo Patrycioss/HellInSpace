@@ -1,28 +1,29 @@
+import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 
-import 'bloc/player_bloc.dart';
-
 class HealthBar extends PositionComponent
     with KeyboardHandler, FlameBlocListenable<PlayerBloc, PlayerState> {
-  final int _maxHealth;
-  final double _gapBetweenHearts = 40;
-  final double _heartScale = 4;
-  final List<Sprite> _sprites;
-  final List<_HeartVisual> _hearts = [];
+  static const double _gapBetweenHearts = 40;
+  static const double _heartScale = 4;
 
-  HealthBar(this._maxHealth, Vector2 position, this._sprites)
+  final List<Sprite> _sprites;
+  final List<SpriteComponent> _hearts = [];
+
+  HealthBar(Vector2 position, this._sprites)
       : super(
           position: position,
         );
 
   @override
   Future<void> onLoad() async {
-    for (int i = 0; i < (_maxHealth / 2).ceil(); i++) {
-      _hearts.add(_HeartVisual(Vector2(_gapBetweenHearts * i, 0), _heartScale));
+    for (int i = 0; i < (GameSettings.maxPlayerHealth / 2).ceil(); i++) {
+      _hearts.add(SpriteComponent(
+          position: Vector2(_gapBetweenHearts * i, 0),
+          scale: Vector2(_heartScale, _heartScale)));
       await add(_hearts.last);
     }
-    updateHealthBar(_maxHealth);
+    updateHealthBar(GameSettings.maxPlayerHealth);
 
     return super.onLoad();
   }
@@ -53,13 +54,4 @@ class HealthBar extends PositionComponent
   void onNewState(PlayerState state) {
     updateHealthBar(state.health);
   }
-}
-
-class _HeartVisual extends SpriteComponent {
-  _HeartVisual(Vector2 position, double scale)
-      : super(
-          anchor: Anchor.center,
-          position: position,
-          scale: Vector2(scale, scale),
-        );
 }
