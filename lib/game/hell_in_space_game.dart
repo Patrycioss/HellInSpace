@@ -1,7 +1,7 @@
 import 'package:flame/game.dart';
+import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flame/events.dart';
 import 'package:flame_bloc/flame_bloc.dart';
-import 'package:flame_forge2d/forge2d_game.dart';
 import 'package:flame_texturepacker/flame_texturepacker.dart';
 
 import 'player/player.dart';
@@ -33,29 +33,20 @@ class HellInSpaceGame extends Forge2DGame
     _spriteFinder =
         SpriteFinder(await atlasFromAssets('HellInSpaceTextures.atlas'));
 
-    _healthBar = HealthBar(
-      _maxPlayerHealth,
-      Vector2(20, 20),
-      _spriteFinder.findSprites('heart'),
-    );
-
-    add(FlameMultiBlocProvider(providers: [
+    await add(FlameMultiBlocProvider(providers: [
       FlameBlocProvider<PlayerBloc, PlayerState>.value(
         value: playerBloc,
       ),
     ], children: [
       _player = Player(
-          _maxPlayerHealth,
-          Vector2(50, 50),
-          _spriteFinder.findSprites('player'),
-          (int health) => _healthBar.updateHealthBar(health))
-    ]));
+        _maxPlayerHealth,
+        Vector2(50, 50),
+        _spriteFinder.findSprites('player'),
+      ),
 
-    // _player = Player(
-    //     _maxPlayerHealth,
-    //     Vector2(50, 50),
-    //     _spriteFinder.findSprites('player'),
-    //     (int health) => _healthBar.updateHealthBar(health));
+      _healthBar = HealthBar(_maxPlayerHealth, Vector2(20, 20),
+          _spriteFinder.findSprites('heart')),
+    ]));
 
     // Load enemy sprites
     // _testEnemy = Enemy(Vector2(300, 300));
@@ -63,8 +54,6 @@ class HellInSpaceGame extends Forge2DGame
     // add(_healthBar);
     // add(_player);
     // add(_testEnemy);
-
-    // camera.follow(_player);
   }
 
   @override

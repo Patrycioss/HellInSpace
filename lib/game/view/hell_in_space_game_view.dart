@@ -12,12 +12,16 @@ class HellInSpaceGameView extends StatefulWidget {
 
 class HellInSpaceGameViewState extends State<HellInSpaceGameView> {
   late FocusNode gameFocusNode;
+  late final HellInSpaceGame game;
 
   @override
   void initState() {
     super.initState();
 
     gameFocusNode = FocusNode();
+    game = HellInSpaceGame(
+      playerBloc: context.read<PlayerBloc>(),
+    );
   }
 
   @override
@@ -41,10 +45,7 @@ class HellInSpaceGameViewState extends State<HellInSpaceGameView> {
               },
               child: GameWidget(
                 focusNode: gameFocusNode,
-                game: HellInSpaceGame(
-                  playerBloc: context.read<PlayerBloc>(),
-                  // inventoryBloc: context.read<InventoryBloc>(),
-                ),
+                game: game,
               ),
             ),
           ),

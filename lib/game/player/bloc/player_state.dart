@@ -1,6 +1,19 @@
 part of 'player_bloc.dart';
 
-@immutable
-sealed class PlayerState {}
+class PlayerState extends Equatable {
+  final int health;
 
-final class PlayerInitial extends PlayerState {}
+  const PlayerState({required this.health});
+
+  const PlayerState.initial()
+      : this(
+          health: GameSettings.maxPlayerHealth,
+        );
+
+  PlayerState copyWith({required int health}) {
+    return PlayerState(health: health);
+  }
+
+  @override
+  List<Object?> get props => [health];
+}

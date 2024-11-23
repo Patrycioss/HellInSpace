@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/services.dart';
 
 import 'bloc/player_bloc.dart';
 
-class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
+class Player extends BodyComponent with KeyboardHandler, ContactCallbacks, HasGameRef<Forge2DGame> {
   final Map<LogicalKeyboardKey, bool> _pressedKeys = {
     LogicalKeyboardKey.keyW: false,
     LogicalKeyboardKey.keyA: false,
@@ -19,7 +20,6 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
   final Vector2 _position;
   final double _radius = 10;
   final double _impulseForce = 10000;
-  final Function(int) _onHealthChangeCallback;
   final int _maxHealth;
 
   int _health = 0;
@@ -27,22 +27,22 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
   set health(int value) {
     if (value <= 0) {
       _health = 0;
-      _onHealthChangeCallback(_health);
       _onDeath(); // TODO
     } else {
       _health = value > _maxHealth ? _maxHealth : value;
-      _onHealthChangeCallback(_health);
     }
+
+    (gameRef as HellInSpaceGame).playerBloc.add(PlayerHealthUpdated(_health));
   }
 
   int get health => _health;
 
-  Player(this._maxHealth, this._position, sprites, this._onHealthChangeCallback)
+  Player(this._maxHealth, this._position, sprites)
       : super(renderBody: false, children: [
           _PlayerSpriteComponent(
               SpriteAnimation.spriteList(sprites, stepTime: 0.2)),
         ]) {
-    health = _maxHealth;
+    _health = _maxHealth;
   }
 
   @override
