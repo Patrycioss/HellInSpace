@@ -4,12 +4,10 @@ abstract class GameEvent {
   const GameEvent();
 }
 
-class EndGameEvent extends GameEvent{
+class EndGameEvent extends GameEvent {
   const EndGameEvent();
 }
 
-class ReplayGameEvent extends GameEvent{
+class ReplayGameEvent extends GameEvent {
   const ReplayGameEvent();
 }
-
-

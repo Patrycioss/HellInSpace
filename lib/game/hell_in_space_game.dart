@@ -34,8 +34,7 @@ class HellInSpaceGame extends Forge2DGame
       Enemy(
         Vector2(300, 300),
       ),
-      HealthBar(Vector2(20, 20),
-          _spriteFinder.findSprites('heart')),
+      HealthBar(Vector2(20, 20), _spriteFinder.findSprites('heart')),
       EndGameBehaviour(),
     ]));
   }

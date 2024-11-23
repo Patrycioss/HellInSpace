@@ -9,9 +9,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<GameEvent>((event, emit) {
       // TODO: implement event handler
 
-      if (event is EndGameEvent){
-
-      }
+      if (event is EndGameEvent) {}
     });
   }
 }
