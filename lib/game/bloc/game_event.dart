@@ -1,19 +1,15 @@
 part of 'game_bloc.dart';
 
-abstract class GameEvent extends Equatable {
+abstract class GameEvent {
   const GameEvent();
 }
 
-class GameStarted extends GameEvent{
-  const GameStarted();
-
-  @override
-  List<Object?> get props => [];
+class EndGameEvent extends GameEvent{
+  const EndGameEvent();
 }
 
-class GameEnded extends GameEvent{
-  const GameEnded();
-
-  @override
-  List<Object?> get props => [];
+class ReplayGameEvent extends GameEvent{
+  const ReplayGameEvent();
 }
+
+

@@ -1,9 +1,10 @@
 import 'package:flame/components.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 
-import 'game.dart';
+import 'bloc/player_bloc.dart';
 
-class HealthBar extends PositionComponent with KeyboardHandler {
+class HealthBar extends PositionComponent
+    with KeyboardHandler, FlameBlocListenable<PlayerBloc, PlayerState> {
   final int _maxHealth;
   final double _gapBetweenHearts = 40;
   final double _heartScale = 4;
@@ -17,14 +18,11 @@ class HealthBar extends PositionComponent with KeyboardHandler {
 
   @override
   Future<void> onLoad() async {
-
     for (int i = 0; i < (_maxHealth / 2).ceil(); i++) {
       _hearts.add(_HeartVisual(Vector2(_gapBetweenHearts * i, 0), _heartScale));
       await add(_hearts.last);
     }
     updateHealthBar(_maxHealth);
-
-    await add(FlameBlocListener<PlayerBloc, PlayerState>(onNewState: _handleNewState));
 
     return super.onLoad();
   }
@@ -46,7 +44,13 @@ class HealthBar extends PositionComponent with KeyboardHandler {
     }
   }
 
-  void _handleNewState(PlayerState state) {
+  @override
+  bool listenWhen(PlayerState previousState, PlayerState newState) {
+    return previousState != newState;
+  }
+
+  @override
+  void onNewState(PlayerState state) {
     updateHealthBar(state.health);
   }
 }

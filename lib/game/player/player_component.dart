@@ -2,13 +2,11 @@ import 'dart:math';
 
 import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
-import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/services.dart';
 
-import 'bloc/player_bloc.dart';
-
-class Player extends BodyComponent with KeyboardHandler, ContactCallbacks, HasGameRef<Forge2DGame> {
+class Player extends BodyComponent
+    with KeyboardHandler, ContactCallbacks, HasGameRef<Forge2DGame> {
   final Map<LogicalKeyboardKey, bool> _pressedKeys = {
     LogicalKeyboardKey.keyW: false,
     LogicalKeyboardKey.keyA: false,
@@ -24,15 +22,21 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks, HasGa
 
   int _health = 0;
 
+  late final HellInSpaceGame hellGameRef;
+
   set health(int value) {
     if (value <= 0) {
-      _health = 0;
-      _onDeath(); // TODO
+      value = 0;
     } else {
-      _health = value > _maxHealth ? _maxHealth : value;
+      value = value > _maxHealth ? _maxHealth : value;
     }
 
-    (gameRef as HellInSpaceGame).playerBloc.add(PlayerHealthUpdated(_health));
+    if (value != health) {
+      _health = value;
+
+      //TODO
+      hellGameRef.playerBloc.add(PlayerHealthUpdated(_health));
+    }
   }
 
   int get health => _health;
@@ -46,11 +50,10 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks, HasGa
   }
 
   @override
-  Future<void> onLoad() async{
-    // TODO: implement onLoad
+  Future<void> onLoad() async {
     await super.onLoad();
 
-    await add(FlameBlocListener<PlayerBloc, PlayerState>(onNewState: _handleNewState));
+    hellGameRef = gameRef as HellInSpaceGame;
   }
 
   @override
@@ -78,12 +81,7 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks, HasGa
   }
 
   @override
-  void beginContact(Object other, Contact contact) {
-// TODO: implement beginContact
-    super.beginContact(other, contact);
-  }
-
-  void _onDeath() {}
+  void beginContact(Object other, Contact contact) {}
 
   @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
@@ -92,9 +90,9 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks, HasGa
     }
 
     if (keysPressed.contains(LogicalKeyboardKey.minus)) {
-        health--;
+      health--;
     } else if (keysPressed.contains(LogicalKeyboardKey.add)) {
-        health++;
+      health++;
     }
 
     return super.onKeyEvent(event, keysPressed);
@@ -129,10 +127,6 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks, HasGa
     body.angularVelocity = 0;
 
     super.update(dt);
-  }
-
-  void _handleNewState(PlayerState state) {
-
   }
 }
 

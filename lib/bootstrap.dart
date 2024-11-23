@@ -1,9 +1,5 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'dart:developer';
-
-import 'package:flutter/widgets.dart';
 
 class AppBlocObserver extends BlocObserver {
   @override
