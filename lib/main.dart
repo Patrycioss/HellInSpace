@@ -1,12 +1,10 @@
+import 'package:bloc/bloc.dart';
+import 'package:dutch_game_studio_assessment/bootstrap.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flame/game.dart';
-import 'my_game.dart';
+import 'app/app.dart';
 
 void main() {
-  runApp(
-    GameWidget(
-      game: MyGame(),
-    ),
-  );
+  Bloc.observer = AppBlocObserver();
+  runApp(const App());
 }

@@ -1,8 +1,11 @@
 import 'dart:math';
 
 import 'package:flame/components.dart';
+import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/services.dart';
+
+import 'bloc/player_bloc.dart';
 
 class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
   final Map<LogicalKeyboardKey, bool> _pressedKeys = {
@@ -25,7 +28,7 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
     if (value <= 0) {
       _health = 0;
       _onHealthChangeCallback(_health);
-      _onDeath();
+      _onDeath(); // TODO
     } else {
       _health = value > _maxHealth ? _maxHealth : value;
       _onHealthChangeCallback(_health);
@@ -40,6 +43,14 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
               SpriteAnimation.spriteList(sprites, stepTime: 0.2)),
         ]) {
     health = _maxHealth;
+  }
+
+  @override
+  Future<void> onLoad() async{
+    // TODO: implement onLoad
+    await super.onLoad();
+
+    await add(FlameBlocListener<PlayerBloc, PlayerState>(onNewState: _handleNewState));
   }
 
   @override
@@ -118,6 +129,10 @@ class Player extends BodyComponent with KeyboardHandler, ContactCallbacks {
     body.angularVelocity = 0;
 
     super.update(dt);
+  }
+
+  void _handleNewState(PlayerState state) {
+
   }
 }
 

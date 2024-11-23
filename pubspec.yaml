@@ -38,6 +38,11 @@ dependencies:
   flame: ^1.21.0
   flame_forge2d: ^0.18.2+1
   flame_texturepacker: ^4.1.2
+  flame_bloc: ^1.12.3
+  equatable: ^2.0.7
+  bloc: ^8.1.4
+  flutter_bloc: ^8.1.6
+  meta: ^1.15.0
 
 dev_dependencies:
   flutter_test:
