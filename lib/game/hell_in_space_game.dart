@@ -1,7 +1,5 @@
 import 'dart:math';
 
-import 'package:dutch_game_studio_assessment/game/extensions/extensions.dart';
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
@@ -42,12 +40,7 @@ class HellInSpaceGame extends Forge2DGame
         Vector2(50, 50),
         _spriteFinder.findSprites('player'),
       ),
-      // Enemy(
-      //   Vector2(300, 300),
-      // ),
-
       enemySpawner = EnemySpawner(),
-
       HealthBar(Vector2(20, 20), _spriteFinder.findSprites('heart')),
       EndGameBehaviour(),
     ]));
@@ -57,13 +50,11 @@ class HellInSpaceGame extends Forge2DGame
   KeyEventResult onKeyEvent(
       KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     if (keysPressed.contains(LogicalKeyboardKey.space)) {
-
-
       enemySpawner.spawnEnemy();
     }
 
-    print(enemySpawner.children.length);
-
     return super.onKeyEvent(event, keysPressed);
   }
+
+  Game get game => game;
 }

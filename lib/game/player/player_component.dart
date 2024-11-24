@@ -20,6 +20,8 @@ class Player extends BodyComponent
 
   late final HellInSpaceGame hellGameRef;
 
+  int get health => _health;
+
   set health(int value) {
     if (value <= 0) {
       value = 0;
@@ -29,13 +31,11 @@ class Player extends BodyComponent
           : value;
     }
 
-    if (value != health) {
+    if (value != _health) {
       _health = value;
       hellGameRef.playerBloc.add(PlayerHealthUpdated(_health));
     }
   }
-
-  int get health => _health;
 
   Player(this._position, sprites)
       : super(children: [

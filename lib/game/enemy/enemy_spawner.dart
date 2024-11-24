@@ -19,16 +19,28 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
   }
 
   void spawnEnemy() {
-    Vector2 position;
+    late Vector2 position;
     do {
       position = Vector2(_random.nextDouble() * gameRef.canvasSize.x,
           _random.nextDouble() * gameRef.canvasSize.y);
     } while (position.distanceTo(hellInSpaceGame.player.position) <
         GameSettings.minimumSpawnDistance);
 
-    Enemy enemy = Enemy(position);
-    add(enemy);
-    dev.log(
-        "Spawned Enemy of type: ${enemy.runtimeType.toString()} at: ${position}");
+    final int settingIndex =
+        _random.nextInt(GameSettings.differentEnemySettings.length);
+    final EnemySettings enemySettings =
+        GameSettings.differentEnemySettings[settingIndex];
+
+    final int moveBehaviourIndex =
+        _random.nextInt(GameSettings.moveBehaviourCount);
+    final EnemyMoveBehaviour enemyMoveBehaviour =
+        GameSettings.getMoveBehaviour(moveBehaviourIndex);
+
+    final Enemy enemy = Enemy(position, enemySettings, enemyMoveBehaviour);
+
+    add(enemy as Component);
+    dev.log("Spawned Enemy with settings: ${enemySettings.name} "
+        "with move behaviour: ${enemyMoveBehaviour.runtimeType.toString()} "
+        "at: ${position}");
   }
 }
