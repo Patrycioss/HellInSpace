@@ -28,6 +28,7 @@ class HellInSpaceGame extends Forge2DGame
 
     world.gravity = Vector2.zero();
 
+
     await add(FlameMultiBlocProvider(providers: [
       FlameBlocProvider<PlayerBloc, PlayerState>(
         create: () {

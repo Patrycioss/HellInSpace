@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/services.dart';
 
 class Player extends BodyComponent
-    with Steering, KeyboardHandler, ContactCallbacks, HasGameRef<Forge2DGame> {
+    with Steering, KeyboardHandler, HasGameRef<Forge2DGame> {
   final Map<LogicalKeyboardKey, bool> _pressedKeys = {
     LogicalKeyboardKey.keyW: false,
     LogicalKeyboardKey.keyA: false,
@@ -31,23 +33,23 @@ class Player extends BodyComponent
           : value;
     }
 
-    if (value != _health) {
-      _health = value;
-      hellGameRef.playerBloc.add(PlayerHealthUpdated(_health));
-    }
+    _health = value;
+    hellGameRef.playerBloc.add(PlayerHealthUpdated(_health));
   }
 
   Player(this._position, sprites)
       : super(children: [
           _PlayerSpriteComponent(
               SpriteAnimation.spriteList(sprites, stepTime: 0.2)),
-        ]) {}
+        ]);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
     hellGameRef = gameRef as HellInSpaceGame;
+
+    _health = GameSettings.maxPlayerHealth;
+    hellGameRef.playerBloc.add(PlayerHealthUpdated(_health));
   }
 
   @override
@@ -75,9 +77,6 @@ class Player extends BodyComponent
   }
 
   @override
-  void beginContact(Object other, Contact contact) {}
-
-  @override
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     for (LogicalKeyboardKey key in _pressedKeys.keys) {
       _pressedKeys[key] = keysPressed.contains(key);
@@ -103,8 +102,12 @@ class Player extends BodyComponent
 
     body.applyLinearImpulse(direction * GameSettings.playerMoveSpeed * dt);
     handleRotation(body);
-
     super.update(dt);
+  }
+
+  void hit(int strength) {
+    log("yep");
+    health -= strength;
   }
 }
 

@@ -1,6 +1,7 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 
+import 'package:dutch_game_studio_assessment/game/component_pool.dart';
 import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
@@ -8,8 +9,11 @@ import 'package:flame_forge2d/forge2d_game.dart';
 class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
   final Random _random;
   late final HellInSpaceGame hellInSpaceGame;
+  late final ComponentPool<Enemy> _enemyPool;
 
-  EnemySpawner({int? seed}) : _random = Random(seed);
+  EnemySpawner({int? seed}) : _random = Random(seed) {
+    _enemyPool = ComponentPool<Enemy>(_createComponentCallback);
+  }
 
   @override
   Future<void> onLoad() async {
@@ -19,6 +23,10 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
   }
 
   void spawnEnemy() {
+    add(_enemyPool.getComponent());
+  }
+
+  Enemy _createComponentCallback() {
     late Vector2 position;
     do {
       position = Vector2(_random.nextDouble() * gameRef.canvasSize.x,
@@ -36,11 +44,14 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
     final EnemyMoveBehaviour enemyMoveBehaviour =
         GameSettings.getMoveBehaviour(moveBehaviourIndex);
 
-    final Enemy enemy = Enemy(position, enemySettings, enemyMoveBehaviour);
-
-    add(enemy as Component);
-    dev.log("Spawned Enemy with settings: ${enemySettings.name} "
+    dev.log("Created Enemy with settings: ${enemySettings.name} "
         "with move behaviour: ${enemyMoveBehaviour.runtimeType.toString()} "
         "at: ${position}");
+
+    return Enemy(position, enemySettings, enemyMoveBehaviour, _onDeathCallback);
+  }
+
+  void _onDeathCallback(Enemy enemy) {
+    _enemyPool.returnComponent(enemy);
   }
 }

@@ -1,32 +1,35 @@
 import 'dart:async' as async;
 
+import 'package:dutch_game_studio_assessment/game/component_pool.dart';
 import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 class Enemy extends BodyComponent
-    with HasGameRef<Forge2DGame>, ContactCallbacks {
+    with HasGameRef<Forge2DGame>, ContactCallbacks
+    implements Resettable {
   final Vector2 _position;
   final EnemySettings _settings;
   final EnemyMoveBehaviour _moveBehaviour;
+  final void Function(Enemy enemy) _onDestroyCallback;
 
   late final HellInSpaceGame _hellInSpaceGame;
 
   late final async.Timer _lifeTimeTimer;
 
-  Enemy(this._position, this._settings, this._moveBehaviour)
+  Enemy(this._position, this._settings, this._moveBehaviour,
+      this._onDestroyCallback)
       : super(renderBody: false, children: [
           RectangleComponent(
             size: Vector2(_settings.width, _settings.height),
           )
-        ]) {
-    _lifeTimeTimer = async.Timer(_settings.lifeTime, destroy);
-  }
+        ]);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
     _hellInSpaceGame = gameRef as HellInSpaceGame;
+    _lifeTimeTimer = async.Timer(_settings.lifeTime, destroy);
   }
 
   @override
@@ -42,7 +45,7 @@ class Enemy extends BodyComponent
     if (_settings.breaksOnAnyCollision) {
       destroy();
     } else if (other is Player) {
-      other.health -= _settings.strength;
+      other.hit(_settings.strength);
       destroy();
     }
   }
@@ -50,6 +53,7 @@ class Enemy extends BodyComponent
   @override
   Body createBody() {
     final shape = PolygonShape();
+
     shape.setAsBox(
         _settings.width / 2.0, _settings.height / 2.0, Vector2(0, 0), 0);
 
@@ -62,6 +66,7 @@ class Enemy extends BodyComponent
       type: BodyType.dynamic,
       linearDamping: 0.6,
       userData: this,
+      bullet: true,
     );
 
     final massData = MassData();
@@ -72,8 +77,13 @@ class Enemy extends BodyComponent
       ..setMassData(massData);
   }
 
-  void destroy() {
+  @override
+  void reset() {
     _lifeTimeTimer.cancel();
     removeFromParent();
+  }
+
+  void destroy() {
+    _onDestroyCallback(this);
   }
 }
