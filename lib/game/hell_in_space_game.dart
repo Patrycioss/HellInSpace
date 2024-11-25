@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'end_screen.dart';
 import 'game.dart';
 
 class HellInSpaceGame extends Forge2DGame
@@ -22,6 +23,9 @@ class HellInSpaceGame extends Forge2DGame
   late final Player _player;
   late final Timer _gameTimer;
   late final InputManager _inputManager;
+  late final SpriteFinder _spriteFinder;
+  bool _gameOver = false;
+  bool _won = false;
 
   Player get player => _player;
 
@@ -31,12 +35,14 @@ class HellInSpaceGame extends Forge2DGame
 
   InputManager get inputManager => _inputManager;
 
+  get spriteFinder => _spriteFinder;
+
+
   @override
   Future<void> onLoad() async {
     await super.onLoad();
 
-    SpriteFinder.createInstance(
-        await atlasFromAssets(GameSettings.spriteAtlasPath));
+    _spriteFinder = SpriteFinder(await atlasFromAssets(GameSettings.spriteAtlasPath));
 
     world.gravity = Vector2.zero();
 
@@ -51,10 +57,10 @@ class HellInSpaceGame extends Forge2DGame
       _enemySpawner = EnemySpawner(),
       _player = Player(
         Vector2(50, 50),
-        SpriteFinder.get().findSprites('player'),
+        spriteFinder.findSprites('player'),
       ),
       PlayerLossChecker(),
-      HealthBar(Vector2(20, 20), SpriteFinder.get().findSprites('heart')),
+      HealthBar(Vector2(20, 20), spriteFinder.findSprites('heart')),
       _inputManager = InputManager(GameSettings.actionMap,
           additionalKeys: GameSettings.additionalKeys),
     ]));
@@ -65,11 +71,15 @@ class HellInSpaceGame extends Forge2DGame
 
   void loseGame() {
     _gameTimer.cancel();
-    _showEndScreen(true);
+    // _showEndScreen(true);
+    _won = false;
+    _gameOver = true;
   }
 
   void _onGameTimerEnd() {
-    _showEndScreen(true);
+    // _showEndScreen(true);
+    _gameOver = true;
+    _won = true;
   }
 
   // void setUpsideDown(bool enable) {
@@ -101,8 +111,14 @@ class HellInSpaceGame extends Forge2DGame
 
       if (inputManager.isKeyPressed(LogicalKeyboardKey.keyV)) {
         dev.log("Starting Screen Shake!");
-        startScreenShake(GameSettings.invincibilityDuration.toInt());
+        startScreenShake(GameSettings.screenShakeDuration);
       }
+    }
+
+    if (_gameOver) {
+      _showEndScreen(_won);
+
+      _gameOver = false;
     }
 
     // Vector2 translation = canvasSize / 2.0;
@@ -131,7 +147,11 @@ class HellInSpaceGame extends Forge2DGame
 
   void _showEndScreen(bool hasWon) {
     // Remove all components beside player
-    removeAll(children);
-    // add(EndScreen(hasWon));
+    // removeAll(children);
+    for (var child in children) {
+      remove(child);
+    }
+
+    add(EndScreen(hasWon));
   }
 }

@@ -31,6 +31,7 @@ class GameSettings {
 
   // Screen Effects
   static const double screenShakeInterval = 0.1;
+  static const int screenShakeDuration = 1;
   static const double screenShakeIntensity = 300;
 
   // Player

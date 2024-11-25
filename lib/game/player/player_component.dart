@@ -111,7 +111,7 @@ class Player extends BodyComponent with Steering, HasHellInSpaceGameRef {
       _spriteComponent.enableInvincibilityEffect();
 
       hellInSpaceGameRef
-          .startScreenShake(GameSettings.invincibilityDuration.toInt());
+          .startScreenShake(GameSettings.screenShakeDuration);
 
       _timeSinceLastHit = 0;
     }
