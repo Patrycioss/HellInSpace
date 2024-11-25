@@ -6,13 +6,6 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/services.dart';
 
 class Player extends BodyComponent with Steering, HasHellInSpaceGameRef {
-  final Map<LogicalKeyboardKey, bool> _pressedKeys = {
-    LogicalKeyboardKey.keyW: false,
-    LogicalKeyboardKey.keyA: false,
-    LogicalKeyboardKey.keyS: false,
-    LogicalKeyboardKey.keyD: false,
-  };
-
   late final _PlayerSpriteComponent _spriteComponent;
 
   final BodyType _bodyType = BodyType.dynamic;
