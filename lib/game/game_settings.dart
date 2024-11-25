@@ -10,7 +10,10 @@ class GameSettings {
 
   // Enemy Spawner
   static const double minimumSpawnDistance = 50;
+  static const int waveSize = 5;
+  static const Duration waveInterval = Duration(seconds: 1);
 
+  // Enemy Settings
   static const List<EnemySettings> differentEnemySettings = [
     EnemySettings("Basic"),
     EnemySettings(
@@ -19,21 +22,21 @@ class GameSettings {
       moveSpeed: 800,
       width: 30,
       height: 30,
-      lifeTime: Duration(seconds: 8),
     ),
     EnemySettings(
       "Tiny",
       strength: 2,
-      lifeTime: Duration(seconds: 5),
+      lifeTime: Duration(seconds: 8),
       moveSpeed: 1800,
       width: 5,
       height: 5,
     )
   ];
 
-  static const int moveBehaviourCount = 2;
+  // Enemy Move Behaviours
+  static const int enemyMoveBehaviourCount = 2;
 
-  static EnemyMoveBehaviour getMoveBehaviour(int index) {
+  static EnemyMoveBehaviour getEnemyMoveBehaviour(int index) {
     switch (index) {
       case 0:
         return BasicEnemyMoveBehaviour();
@@ -42,7 +45,7 @@ class GameSettings {
 
       default:
         log("Failed to get move behaviour with index: $index, "
-            "did you forget to update the moveBehaviourCount with value: $moveBehaviourCount");
+            "did you forget to update the moveBehaviourCount with value: $enemyMoveBehaviourCount");
         return BasicEnemyMoveBehaviour();
     }
   }

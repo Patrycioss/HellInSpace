@@ -15,7 +15,7 @@ class EnemySettings {
     int? strength,
     double? width,
     double? height,
-  })  : lifeTime = lifeTime ?? const Duration(seconds: 10),
+  })  : lifeTime = lifeTime ?? const Duration(seconds: 15),
         moveSpeed = moveSpeed ?? 700,
         breaksOnAnyCollision = breaksOnAnyCollision ?? false,
         strength = strength ?? 1,

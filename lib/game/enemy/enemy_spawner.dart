@@ -10,6 +10,7 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
   final Random _random;
   late final HellInSpaceGame hellInSpaceGame;
   late final ComponentPool<Enemy> _enemyPool;
+  late double _intervalDuration = 0;
 
   EnemySpawner({int? seed}) : _random = Random(seed) {
     _enemyPool = ComponentPool<Enemy>(_createComponentCallback);
@@ -22,7 +23,25 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
     hellInSpaceGame = gameRef as HellInSpaceGame;
   }
 
-  Vector2 _decidePosition() {
+  @override
+  void update(double dt) {
+    super.update(dt);
+
+    _intervalDuration += dt;
+    if (_intervalDuration >= GameSettings.waveInterval.inSeconds) {
+      for (int i = 0; i < GameSettings.waveSize; i++) {
+        spawnEnemy();
+      }
+
+      _intervalDuration = 0;
+    }
+  }
+
+  void spawnEnemy() {
+    add(_enemyPool.getComponent()..setPosition(_decideSpawnPosition()));
+  }
+
+  Vector2 _decideSpawnPosition() {
     late Vector2 position;
     do {
       position = Vector2(_random.nextDouble() * gameRef.canvasSize.x,
@@ -33,25 +52,21 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
     return position;
   }
 
-  void spawnEnemy() {
-    add(_enemyPool.getComponent()..setPosition(_decidePosition()));
-  }
-
   Enemy _createComponentCallback() {
-    final Vector2 position = _decidePosition();
+    final Vector2 position = _decideSpawnPosition();
     final int settingIndex =
         _random.nextInt(GameSettings.differentEnemySettings.length);
     final EnemySettings enemySettings =
         GameSettings.differentEnemySettings[settingIndex];
 
     final int moveBehaviourIndex =
-        _random.nextInt(GameSettings.moveBehaviourCount);
+        _random.nextInt(GameSettings.enemyMoveBehaviourCount);
     final EnemyMoveBehaviour enemyMoveBehaviour =
-        GameSettings.getMoveBehaviour(moveBehaviourIndex);
+        GameSettings.getEnemyMoveBehaviour(moveBehaviourIndex);
 
-    dev.log("Created Enemy with settings: ${enemySettings.name} "
-        "with move behaviour: ${enemyMoveBehaviour.runtimeType.toString()} "
-        "at: ${position}");
+    // dev.log("Created Enemy with settings: ${enemySettings.name} "
+    //     "with move behaviour: ${enemyMoveBehaviour.runtimeType.toString()} "
+    //     "at: ${position}");
 
     return Enemy(position, enemySettings, enemyMoveBehaviour, _onDeathCallback);
   }
