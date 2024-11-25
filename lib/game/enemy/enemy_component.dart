@@ -7,13 +7,12 @@ import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 class Enemy extends BodyComponent
-    with HasGameRef<Forge2DGame>, ContactCallbacks
+    with HasHellInSpaceGameRef, ContactCallbacks
     implements Resettable {
   final EnemySettings _settings;
   final EnemyMoveBehaviour _moveBehaviour;
   final void Function(Enemy enemy) _onDestroyCallback;
 
-  late HellInSpaceGame _hellInSpaceGame;
   late async.Timer _lifeTimeTimer;
   Vector2 _startPosition;
 
@@ -24,11 +23,10 @@ class Enemy extends BodyComponent
   @override
   void onMount() {
     super.onMount();
-    if (!world.physicsWorld.bodies.contains(body)){
+    if (!world.physicsWorld.bodies.contains(body)) {
       body = createBody();
     }
 
-    _hellInSpaceGame = gameRef as HellInSpaceGame;
     _lifeTimeTimer = async.Timer(_settings.lifeTime, destroy);
 
     add(RectangleComponent(
@@ -39,7 +37,8 @@ class Enemy extends BodyComponent
   @override
   void update(double dt) {
     super.update(dt);
-    _moveBehaviour.handleMovement(dt, body, _hellInSpaceGame.player, _settings);
+    _moveBehaviour.handleMovement(
+        dt, body, hellInSpaceGameRef.player, _settings);
   }
 
   @override
@@ -56,8 +55,6 @@ class Enemy extends BodyComponent
 
   @override
   Body createBody() {
-
-
     final shape = PolygonShape();
 
     shape.setAsBox(

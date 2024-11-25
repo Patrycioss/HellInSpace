@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dutch_game_studio_assessment/game/mixins/has_hell_in_space_game_ref.dart';
 import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/rendering.dart';
@@ -7,7 +8,7 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/services.dart';
 
 class Player extends BodyComponent
-    with Steering, KeyboardHandler, HasGameRef<Forge2DGame> {
+    with Steering, KeyboardHandler, HasHellInSpaceGameRef {
   final Map<LogicalKeyboardKey, bool> _pressedKeys = {
     LogicalKeyboardKey.keyW: false,
     LogicalKeyboardKey.keyA: false,
@@ -22,8 +23,6 @@ class Player extends BodyComponent
   final double _radius = 10;
 
   int _health = 0;
-
-  late final HellInSpaceGame hellGameRef;
 
   double _timeSinceLastHit = 0;
   bool _invincibilityActive = false;
@@ -40,7 +39,7 @@ class Player extends BodyComponent
     }
 
     _health = value;
-    hellGameRef.playerBloc.add(PlayerHealthUpdated(_health));
+    hellInSpaceGameRef.playerBloc.add(PlayerHealthUpdated(_health));
   }
 
   Player(this._position, sprites)
@@ -55,10 +54,8 @@ class Player extends BodyComponent
   Future<void> onLoad() async {
     await super.onLoad();
 
-    hellGameRef = gameRef as HellInSpaceGame;
-
     _health = GameSettings.maxPlayerHealth;
-    hellGameRef.playerBloc.add(PlayerHealthUpdated(_health));
+    hellInSpaceGameRef.playerBloc.add(PlayerHealthUpdated(_health));
   }
 
   @override
@@ -130,7 +127,7 @@ class Player extends BodyComponent
       _invincibilityActive = true;
       _spriteComponent.enableInvincibilityEffect();
 
-      hellGameRef.startScreenShake(GameSettings.invincibilityDuration.toInt());
+      hellInSpaceGameRef.startScreenShake(GameSettings.invincibilityDuration.toInt());
 
       _timeSinceLastHit = 0;
     }

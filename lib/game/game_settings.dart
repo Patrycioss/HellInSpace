@@ -5,6 +5,9 @@ import 'package:dutch_game_studio_assessment/game/game.dart';
 
 class GameSettings {
 
+  // Game
+  static const int secondsToSurvive = 20;
+
   // Sprites
   static const String spriteAtlasPath = "HellInSpaceTextures.atlas";
 

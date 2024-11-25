@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:developer' as dev;
 
+import 'package:dutch_game_studio_assessment/game/end_game_checker.dart';
 import 'package:flame/game.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
@@ -10,6 +11,7 @@ import 'package:flame_texturepacker/flame_texturepacker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'end_screen.dart';
 import 'game.dart';
 
 class HellInSpaceGame extends Forge2DGame
@@ -20,13 +22,16 @@ class HellInSpaceGame extends Forge2DGame
 
   final void Function() _onResetCallback;
 
+  late final Timer _gameTimer;
+
   HellInSpaceGame(this._onResetCallback);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
 
-    SpriteFinder.createInstance(await atlasFromAssets(GameSettings.spriteAtlasPath));
+    SpriteFinder.createInstance(
+        await atlasFromAssets(GameSettings.spriteAtlasPath));
 
     world.gravity = Vector2.zero();
 
@@ -43,9 +48,21 @@ class HellInSpaceGame extends Forge2DGame
         Vector2(50, 50),
         SpriteFinder.get().findSprites('player'),
       ),
+      PlayerLossChecker(),
       HealthBar(Vector2(20, 20), SpriteFinder.get().findSprites('heart')),
-      EndGameBehaviour(),
     ]));
+
+    _gameTimer = Timer(const Duration(seconds: GameSettings.secondsToSurvive),
+        _onGameTimerEnd);
+  }
+
+  void loseGame() {
+    _gameTimer.cancel();
+    _showEndScreen(true);
+  }
+
+  void _onGameTimerEnd() {
+    _showEndScreen(true);
   }
 
   // void setUpsideDown(bool enable) {
@@ -94,7 +111,7 @@ class HellInSpaceGame extends Forge2DGame
 
     if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
       dev.log("Resetting game!");
-      reset();
+      replay();
     }
 
     if (keysPressed.contains(LogicalKeyboardKey.keyV)) {
@@ -105,15 +122,13 @@ class HellInSpaceGame extends Forge2DGame
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void reset() {
+  void replay() {
     _onResetCallback();
   }
 
-  void end(bool hasWon){
+  void _showEndScreen(bool hasWon) {
     // Remove all components beside player
-    removeWhere((component) => (component is Player));
-
-
-
+    removeAll(children);
+    // add(EndScreen(hasWon));
   }
 }
