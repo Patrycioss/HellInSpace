@@ -4,6 +4,11 @@ import 'package:dutch_game_studio_assessment/game/behaviours/enemy/random_direct
 import 'package:dutch_game_studio_assessment/game/game.dart';
 
 class GameSettings {
+
+  // Screen Effects
+  static const double screenShakeInterval = 0.1;
+  static const double screenShakeIntensity = 300;
+
   // Player
   static const int maxPlayerHealth = 7;
   static const double playerMoveSpeed = 10000;

@@ -25,10 +25,10 @@ class HellInSpaceGame extends Forge2DGame
 
   final void Function() _onResetCallback;
 
-  final double _screenShakeInterval = 0.2;
-  final double _screenShakeIntensity = 300;
-
   Matrix4 _worldTransformation = Matrix4.identity();
+
+  Timer? _timer;
+  bool _shaking = false;
 
   HellInSpaceGame(this._onResetCallback);
 
@@ -74,10 +74,6 @@ class HellInSpaceGame extends Forge2DGame
     }
   }
 
-  void applyScreenSpaceEffect(Effect effect) {
-    // effect.
-  }
-
   bool left = false;
 
   double _currentCycleLength = 0;
@@ -90,21 +86,22 @@ class HellInSpaceGame extends Forge2DGame
       if (!left) {
         mod = 1;
 
-        if (_currentCycleLength >= _screenShakeInterval) {
+        if (_currentCycleLength >= GameSettings.screenShakeInterval) {
           _currentCycleLength = 0;
           left = true;
         }
       } else {
         mod = -1;
-        if (_currentCycleLength >= _screenShakeInterval) {
+        if (_currentCycleLength >= GameSettings.screenShakeInterval) {
           _currentCycleLength = 0;
           left = false;
         }
       }
-      _worldTransformation.translate(_screenShakeIntensity * mod * dt);
+      _worldTransformation
+          .translate(GameSettings.screenShakeIntensity * dt * mod);
     }
 
-      // Vector2 translation = canvasSize / 2.0;
+    // Vector2 translation = canvasSize / 2.0;
 
     // _worldTransformation.translate(translation.x, translation.y);
     // _worldTransformation.rotateZ(1 * dt);
@@ -123,19 +120,14 @@ class HellInSpaceGame extends Forge2DGame
     super.render(canvas);
   }
 
-  Timer? _timer;
-  bool _shaking = false;
-  Matrix4? _recordedWorldTransformation;
-
-  void startScreenShake(Duration duration) {
-
-    if (_shaking){
-      dev.log("Won't start screen shake effect as another shake effect is already busy!");
+  void startScreenShake(int duration) {
+    if (_shaking) {
+      dev.log(
+          "Won't start screen shake effect as another shake effect is already busy!");
       return;
     }
 
-    _recordedWorldTransformation = _worldTransformation;
-    _timer = Timer(duration, () {
+    _timer = Timer(Duration(seconds: duration), () {
       stopScreenShake();
       _shaking = false;
       _timer = null;
@@ -153,7 +145,7 @@ class HellInSpaceGame extends Forge2DGame
       _timer!.cancel();
     }
     _timer = null;
-    _worldTransformation = _recordedWorldTransformation!;
+    _worldTransformation = Matrix4.identity();
   }
 
   @override
@@ -170,7 +162,7 @@ class HellInSpaceGame extends Forge2DGame
 
     if (keysPressed.contains(LogicalKeyboardKey.keyV)) {
       dev.log("Starting Screen Shake!");
-      startScreenShake(const Duration(seconds: 1));
+      startScreenShake(GameSettings.invincibilityDuration.toInt());
     }
 
     return super.onKeyEvent(event, keysPressed);
@@ -179,6 +171,4 @@ class HellInSpaceGame extends Forge2DGame
   void reset() {
     _onResetCallback();
   }
-
-  Game get game => game;
 }

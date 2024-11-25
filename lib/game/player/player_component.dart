@@ -130,6 +130,8 @@ class Player extends BodyComponent
       _invincibilityActive = true;
       _spriteComponent.enableInvincibilityEffect();
 
+      hellGameRef.startScreenShake(GameSettings.invincibilityDuration.toInt());
+
       _timeSinceLastHit = 0;
     }
   }
