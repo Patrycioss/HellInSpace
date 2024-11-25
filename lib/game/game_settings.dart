@@ -5,6 +5,9 @@ import 'package:dutch_game_studio_assessment/game/game.dart';
 
 class GameSettings {
 
+  // Sprites
+  static const String spriteAtlasPath = "HellInSpaceTextures.atlas";
+
   // Screen Effects
   static const double screenShakeInterval = 0.1;
   static const double screenShakeIntensity = 300;

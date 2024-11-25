@@ -3,16 +3,16 @@ import 'dart:math';
 
 import 'package:dutch_game_studio_assessment/game/component_pool.dart';
 import 'package:dutch_game_studio_assessment/game/game.dart';
+import 'package:dutch_game_studio_assessment/random_generator.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/forge2d_game.dart';
 
 class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
-  final Random _random;
   late final HellInSpaceGame hellInSpaceGame;
   late final ComponentPool<Enemy> _enemyPool;
   late double _intervalDuration = 0;
 
-  EnemySpawner({int? seed}) : _random = Random(seed) {
+  EnemySpawner() {
     _enemyPool = ComponentPool<Enemy>(_createComponentCallback);
   }
 
@@ -44,8 +44,8 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
   Vector2 _decideSpawnPosition() {
     late Vector2 position;
     do {
-      position = Vector2(_random.nextDouble() * gameRef.canvasSize.x,
-          _random.nextDouble() * gameRef.canvasSize.y);
+      position = Vector2(RandomGenerator.get().random.nextDouble() * gameRef.canvasSize.x,
+          RandomGenerator.get().random.nextDouble() * gameRef.canvasSize.y);
     } while (position.distanceTo(hellInSpaceGame.player.position) <
         GameSettings.minimumSpawnDistance);
 
@@ -55,12 +55,12 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
   Enemy _createComponentCallback() {
     final Vector2 position = _decideSpawnPosition();
     final int settingIndex =
-        _random.nextInt(GameSettings.differentEnemySettings.length);
+        RandomGenerator.get().random.nextInt(GameSettings.differentEnemySettings.length);
     final EnemySettings enemySettings =
         GameSettings.differentEnemySettings[settingIndex];
 
     final int moveBehaviourIndex =
-        _random.nextInt(GameSettings.enemyMoveBehaviourCount);
+        RandomGenerator.get().random.nextInt(GameSettings.enemyMoveBehaviourCount);
     final EnemyMoveBehaviour enemyMoveBehaviour =
         GameSettings.getEnemyMoveBehaviour(moveBehaviourIndex);
 

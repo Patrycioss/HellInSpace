@@ -6,7 +6,7 @@ class RandomGenerator {
 
   final Random _random = Random();
 
-  RandomGenerator get() {
+  static RandomGenerator get() {
     if (!_instantiated) {
       _instance = RandomGenerator();
       _instantiated = true;

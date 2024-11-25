@@ -18,10 +18,6 @@ class HellInSpaceGame extends Forge2DGame
   late final EnemySpawner enemySpawner;
   late final Player player;
 
-  late final SpriteFinder _spriteFinder;
-
-  final Random random = Random();
-
   final void Function() _onResetCallback;
 
   HellInSpaceGame(this._onResetCallback);
@@ -30,8 +26,7 @@ class HellInSpaceGame extends Forge2DGame
   Future<void> onLoad() async {
     await super.onLoad();
 
-    _spriteFinder =
-        SpriteFinder(await atlasFromAssets('HellInSpaceTextures.atlas'));
+    SpriteFinder.createInstance(await atlasFromAssets(GameSettings.spriteAtlasPath));
 
     world.gravity = Vector2.zero();
 
@@ -46,9 +41,9 @@ class HellInSpaceGame extends Forge2DGame
       enemySpawner = EnemySpawner(),
       player = Player(
         Vector2(50, 50),
-        _spriteFinder.findSprites('player'),
+        SpriteFinder.get().findSprites('player'),
       ),
-      HealthBar(Vector2(20, 20), _spriteFinder.findSprites('heart')),
+      HealthBar(Vector2(20, 20), SpriteFinder.get().findSprites('heart')),
       EndGameBehaviour(),
     ]));
   }
@@ -112,5 +107,13 @@ class HellInSpaceGame extends Forge2DGame
 
   void reset() {
     _onResetCallback();
+  }
+
+  void end(bool hasWon){
+    // Remove all components beside player
+    removeWhere((component) => (component is Player));
+
+
+
   }
 }
