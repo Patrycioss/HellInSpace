@@ -24,4 +24,4 @@ class ComponentPool<T extends Component> {
     (component as Resettable).reset();
     _componentsReady.add(component);
   }
-}}
+}
