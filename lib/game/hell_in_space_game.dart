@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:developer' as dev;
 
 import 'package:flame/game.dart';
 import 'package:flame_bloc/flame_bloc.dart';
@@ -19,6 +20,10 @@ class HellInSpaceGame extends Forge2DGame
   late final SpriteFinder _spriteFinder;
 
   final Random random = Random();
+
+  final void Function() _onResetCallback;
+
+  HellInSpaceGame(this._onResetCallback);
 
   @override
   Future<void> onLoad() async {
@@ -54,7 +59,16 @@ class HellInSpaceGame extends Forge2DGame
       enemySpawner.spawnEnemy();
     }
 
+    if (keysPressed.contains(LogicalKeyboardKey.keyR)){
+      dev.log("Resetting game!");
+      reset();
+    }
+
     return super.onKeyEvent(event, keysPressed);
+  }
+
+  void reset(){
+    _onResetCallback();
   }
 
   Game get game => game;
