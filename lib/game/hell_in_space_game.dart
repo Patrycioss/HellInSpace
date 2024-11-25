@@ -33,7 +33,6 @@ class HellInSpaceGame extends Forge2DGame
 
     world.gravity = Vector2.zero();
 
-
     await add(FlameMultiBlocProvider(providers: [
       FlameBlocProvider<PlayerBloc, PlayerState>(
         create: () {
@@ -59,7 +58,7 @@ class HellInSpaceGame extends Forge2DGame
       enemySpawner.spawnEnemy();
     }
 
-    if (keysPressed.contains(LogicalKeyboardKey.keyR)){
+    if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
       dev.log("Resetting game!");
       reset();
     }
@@ -67,7 +66,7 @@ class HellInSpaceGame extends Forge2DGame
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void reset(){
+  void reset() {
     _onResetCallback();
   }
 

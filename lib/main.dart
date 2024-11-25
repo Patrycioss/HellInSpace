@@ -7,27 +7,32 @@ import 'game/game.dart';
 
 void main() {
   Bloc.observer = AppBlocObserver();
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     home: GamePage(),
   ));
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData.dark(),
-      home: GamePage(),
+      home: const GamePage(),
     );
   }
 }
 
 class GamePage extends StatefulWidget {
+  const GamePage({super.key});
+
   @override
   GamePageState createState() => GamePageState();
 }
 
 class GamePageState extends State<GamePage> {
+  // Use to reset game
   int _count = 0;
 
   @override

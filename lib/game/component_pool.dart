@@ -22,7 +22,6 @@ class ComponentPool<T extends Component> {
 
   int get componentsAvailable => _componentsReady.length;
 
-
   void setMaxComponentCount(int count) {
     _maxComponentCount = count;
   }
