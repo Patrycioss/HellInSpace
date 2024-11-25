@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:developer' as dev;
 
-import 'package:flame/effects.dart';
 import 'package:flame/game.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
@@ -14,7 +13,7 @@ import 'package:flutter/widgets.dart';
 import 'game.dart';
 
 class HellInSpaceGame extends Forge2DGame
-    with HasKeyboardHandlerComponents, HasCollisionDetection {
+    with HasKeyboardHandlerComponents, HasCollisionDetection, ScreenShaker {
   late final PlayerBloc playerBloc;
   late final EnemySpawner enemySpawner;
   late final Player player;
@@ -25,18 +24,11 @@ class HellInSpaceGame extends Forge2DGame
 
   final void Function() _onResetCallback;
 
-  Matrix4 _worldTransformation = Matrix4.identity();
-
-  Timer? _timer;
-  bool _shaking = false;
-
   HellInSpaceGame(this._onResetCallback);
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
-    // setUpsideDown(true);
 
     _spriteFinder =
         SpriteFinder(await atlasFromAssets('HellInSpaceTextures.atlas'));
@@ -61,45 +53,22 @@ class HellInSpaceGame extends Forge2DGame
     ]));
   }
 
-  void setUpsideDown(bool enable) {
-    if (enable) {
-      // _worldTransformation.scale(-1.0, -1.0);
-      _worldTransformation.setRotationZ(pi);
-      // _worldTransformation.scale(1, -1.0, 1.0);
-      _worldTransformation
-          .setTranslation(Vector3(canvasSize.x, canvasSize.y, 0));
-    } else {
-      _worldTransformation.setRotationZ(0);
-      _worldTransformation.setTranslation(Vector3(0, 0, 0));
-    }
-  }
-
-  bool left = false;
-
-  double _currentCycleLength = 0;
+  // void setUpsideDown(bool enable) {
+  //   if (enable) {
+  //     // _worldTransformation.scale(-1.0, -1.0);
+  //     _worldTransformation.setRotationZ(pi);
+  //     // _worldTransformation.scale(1, -1.0, 1.0);
+  //     _worldTransformation
+  //         .setTranslation(Vector3(canvasSize.x, canvasSize.y, 0));
+  //   } else {
+  //     _worldTransformation.setRotationZ(0);
+  //     _worldTransformation.setTranslation(Vector3(0, 0, 0));
+  //   }
+  // }
 
   @override
   void update(double dt) {
-    _currentCycleLength += dt;
-    if (_shaking) {
-      late final int mod;
-      if (!left) {
-        mod = 1;
-
-        if (_currentCycleLength >= GameSettings.screenShakeInterval) {
-          _currentCycleLength = 0;
-          left = true;
-        }
-      } else {
-        mod = -1;
-        if (_currentCycleLength >= GameSettings.screenShakeInterval) {
-          _currentCycleLength = 0;
-          left = false;
-        }
-      }
-      _worldTransformation
-          .translate(GameSettings.screenShakeIntensity * dt * mod);
-    }
+    updateScreenShaker(dt);
 
     // Vector2 translation = canvasSize / 2.0;
 
@@ -115,37 +84,10 @@ class HellInSpaceGame extends Forge2DGame
 
   @override
   void render(Canvas canvas) {
-    canvas.transform(_worldTransformation.storage);
-
+    Matrix4 transform = Matrix4.identity();
+    transform *= getScreenShakeTransform();
+    canvas.transform(transform.storage);
     super.render(canvas);
-  }
-
-  void startScreenShake(int duration) {
-    if (_shaking) {
-      dev.log(
-          "Won't start screen shake effect as another shake effect is already busy!");
-      return;
-    }
-
-    _timer = Timer(Duration(seconds: duration), () {
-      stopScreenShake();
-      _shaking = false;
-      _timer = null;
-    });
-    _shaking = true;
-  }
-
-  void stopScreenShake() {
-    if (!_shaking) {
-      return;
-    }
-
-    _shaking = false;
-    if (_timer!.isActive) {
-      _timer!.cancel();
-    }
-    _timer = null;
-    _worldTransformation = Matrix4.identity();
   }
 
   @override
