@@ -7,11 +7,12 @@ class GameSettings {
   // Player
   static const int maxPlayerHealth = 7;
   static const double playerMoveSpeed = 10000;
+  static const double invincibilityDuration = 3;
 
   // Enemy Spawner
   static const double minimumSpawnDistance = 50;
   static const int waveSize = 5;
-  static const Duration waveInterval = Duration(seconds: 1);
+  static const double waveInterval = 1;
 
   // Enemy Settings
   static const List<EnemySettings> differentEnemySettings = [

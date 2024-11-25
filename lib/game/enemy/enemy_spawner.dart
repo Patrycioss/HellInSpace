@@ -28,7 +28,7 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
     super.update(dt);
 
     _intervalDuration += dt;
-    if (_intervalDuration >= GameSettings.waveInterval.inSeconds) {
+    if (_intervalDuration >= GameSettings.waveInterval) {
       for (int i = 0; i < GameSettings.waveSize; i++) {
         spawnEnemy();
       }

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
+import 'package:flame/rendering.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/services.dart';
 
@@ -14,6 +15,8 @@ class Player extends BodyComponent
     LogicalKeyboardKey.keyD: false,
   };
 
+  late final _PlayerSpriteComponent _spriteComponent;
+
   final BodyType _bodyType = BodyType.dynamic;
   final Vector2 _position;
   final double _radius = 10;
@@ -21,6 +24,9 @@ class Player extends BodyComponent
   int _health = 0;
 
   late final HellInSpaceGame hellGameRef;
+
+  double _timeSinceLastHit = 0;
+  bool _invincibilityActive = false;
 
   int get health => _health;
 
@@ -38,14 +44,17 @@ class Player extends BodyComponent
   }
 
   Player(this._position, sprites)
-      : super(children: [
+      : super(renderBody: false, children: [
           _PlayerSpriteComponent(
-              SpriteAnimation.spriteList(sprites, stepTime: 0.2)),
-        ]);
+              SpriteAnimation.spriteList(sprites, stepTime: 0.2))
+        ]) {
+    _spriteComponent = children.first as _PlayerSpriteComponent;
+  }
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+
     hellGameRef = gameRef as HellInSpaceGame;
 
     _health = GameSettings.maxPlayerHealth;
@@ -93,6 +102,15 @@ class Player extends BodyComponent
 
   @override
   void update(double dt) {
+    _timeSinceLastHit += dt;
+
+    if (_invincibilityActive) {
+      if (_timeSinceLastHit >= GameSettings.invincibilityDuration) {
+        _invincibilityActive = false;
+        _spriteComponent.disableInvincibilityEffect();
+      }
+    }
+
     Vector2 direction = getSteeringDirection(
       upPressed: _pressedKeys[LogicalKeyboardKey.keyW]!,
       downPressed: _pressedKeys[LogicalKeyboardKey.keyS]!,
@@ -106,7 +124,14 @@ class Player extends BodyComponent
   }
 
   void hit(int strength) {
-    health -= strength;
+    if (_timeSinceLastHit >= GameSettings.invincibilityDuration) {
+      health -= strength;
+
+      _invincibilityActive = true;
+      _spriteComponent.enableInvincibilityEffect();
+
+      _timeSinceLastHit = 0;
+    }
   }
 }
 
@@ -116,4 +141,12 @@ class _PlayerSpriteComponent extends SpriteAnimationComponent {
           animation: animation,
           anchor: Anchor.center,
         );
+
+  void enableInvincibilityEffect() {
+    decorator.addLast(PaintDecorator.tint(const Color.fromARGB(180, 255, 1, 1)));
+  }
+
+  void disableInvincibilityEffect() {
+    decorator.removeLast();
+  }
 }
