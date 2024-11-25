@@ -4,6 +4,7 @@ import 'dart:developer' as dev;
 import 'package:dutch_game_studio_assessment/game/end_game_checker.dart';
 import 'package:dutch_game_studio_assessment/input/input.dart';
 import 'package:flame/game.dart';
+import 'package:flame_audio/flame_audio.dart' as audio;
 import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame/events.dart';
@@ -37,14 +38,20 @@ class HellInSpaceGame extends Forge2DGame
 
   get spriteFinder => _spriteFinder;
 
-
   @override
   Future<void> onLoad() async {
     await super.onLoad();
 
-    _spriteFinder = SpriteFinder(await atlasFromAssets(GameSettings.spriteAtlasPath));
+    _spriteFinder =
+        SpriteFinder(await atlasFromAssets(GameSettings.spriteAtlasPath));
 
     world.gravity = Vector2.zero();
+
+    await _preloadAudio();
+
+    if (!audio.FlameAudio.bgm.isPlaying){
+     audio.FlameAudio.bgm.play('music.mp3', volume: 0.4);
+    }
 
     await add(FlameMultiBlocProvider(providers: [
       FlameBlocProvider<PlayerBloc, PlayerState>(
@@ -71,29 +78,14 @@ class HellInSpaceGame extends Forge2DGame
 
   void loseGame() {
     _gameTimer.cancel();
-    // _showEndScreen(true);
     _won = false;
     _gameOver = true;
   }
 
   void _onGameTimerEnd() {
-    // _showEndScreen(true);
     _gameOver = true;
     _won = true;
   }
-
-  // void setUpsideDown(bool enable) {
-  //   if (enable) {
-  //     // _worldTransformation.scale(-1.0, -1.0);
-  //     _worldTransformation.setRotationZ(pi);
-  //     // _worldTransformation.scale(1, -1.0, 1.0);
-  //     _worldTransformation
-  //         .setTranslation(Vector3(canvasSize.x, canvasSize.y, 0));
-  //   } else {
-  //     _worldTransformation.setRotationZ(0);
-  //     _worldTransformation.setTranslation(Vector3(0, 0, 0));
-  //   }
-  // }
 
   @override
   void update(double dt) {
@@ -117,19 +109,9 @@ class HellInSpaceGame extends Forge2DGame
 
     if (_gameOver) {
       _showEndScreen(_won);
-
       _gameOver = false;
     }
 
-    // Vector2 translation = canvasSize / 2.0;
-
-    // _worldTransformation.translate(translation.x, translation.y);
-    // _worldTransformation.rotateZ(1 * dt);
-    // _worldTransformation.translate(-translation.x, -translation.y);
-
-    // _worldTransformation.setFromTranslationRotation(Vector3(canvasSize.x/2.0, canvasSize.y/2.0, 0), Quaternion.fromRotation(Matrix3.rotationZ(0.1 * pi * dt)));
-
-    // _worldTransformation.rotateZ(10 * dt);
     super.update(dt);
   }
 
@@ -146,12 +128,15 @@ class HellInSpaceGame extends Forge2DGame
   }
 
   void _showEndScreen(bool hasWon) {
-    // Remove all components beside player
-    // removeAll(children);
+    stopScreenShake();
     for (var child in children) {
       remove(child);
     }
-
     add(EndScreen(hasWon));
+  }
+
+  Future<void> _preloadAudio() async{
+    await audio.FlameAudio.audioCache.load('hit_sound.wav');
+    await audio.FlameAudio.audioCache.load('music.mp3');
   }
 }

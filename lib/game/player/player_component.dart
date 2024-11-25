@@ -1,8 +1,11 @@
 import 'package:dutch_game_studio_assessment/game/game.dart';
 
 import 'package:flame/components.dart';
+import 'package:flame/particles.dart';
 import 'package:flame/rendering.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Player extends BodyComponent with Steering, HasHellInSpaceGameRef {
@@ -110,8 +113,18 @@ class Player extends BodyComponent with Steering, HasHellInSpaceGameRef {
       _invincibilityActive = true;
       _spriteComponent.enableInvincibilityEffect();
 
-      hellInSpaceGameRef
-          .startScreenShake(GameSettings.screenShakeDuration);
+      hellInSpaceGameRef.startScreenShake(GameSettings.screenShakeDuration);
+
+      FlameAudio.play("hit_sound.wav");
+
+      add(
+        ParticleSystemComponent(
+          particle: CircleParticle(
+            radius: 30,
+            paint: Paint()..color = Colors.yellow.withOpacity(.5),
+          ),
+        ),
+      );
 
       _timeSinceLastHit = 0;
     }
@@ -134,3 +147,9 @@ class _PlayerSpriteComponent extends SpriteAnimationComponent {
     decorator.removeLast();
   }
 }
+
+// class _HitParticlesComponent extends ParticleSystemComponent{
+//
+//   _HitParticlesComponent() : super(particle: Particle(system))
+//
+// }

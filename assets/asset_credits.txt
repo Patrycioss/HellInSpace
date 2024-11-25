@@ -1,2 +1,3 @@
 player sprite => Edited version from https://kenney.nl/assets/simple-space
 heart sprites => https://kenney.nl/assets/micro-roguelike
+hit sound effect => errror.wav from https://opengameart.org/content/space-shooter-sound-effects
