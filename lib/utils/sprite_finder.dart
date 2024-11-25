@@ -1,5 +1,3 @@
-import 'dart:developer' as dev;
-
 import 'package:flame_texturepacker/flame_texturepacker.dart';
 
 class SpriteFinder {

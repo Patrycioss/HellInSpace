@@ -1,6 +1,8 @@
 import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 
+part 'key_state.dart';
+
 class InputManager extends Component with KeyboardHandler {
   final Map<String, Set<LogicalKeyboardKey>> _actionMap;
   final Map<LogicalKeyboardKey, _KeyState> _keyRegister = {};
@@ -110,7 +112,4 @@ class InputManager extends Component with KeyboardHandler {
   }
 }
 
-class _KeyState {
-  bool down = false;
-  bool wasDown = false;
-}
+

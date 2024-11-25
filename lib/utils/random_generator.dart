@@ -1,6 +1,8 @@
 import 'dart:math';
 
 class RandomGenerator {
+  Random get random => _random;
+
   static RandomGenerator? _instance;
   static bool _instantiated = false;
 
@@ -14,6 +16,4 @@ class RandomGenerator {
 
     return _instance!;
   }
-
-  Random get random => _random;
 }

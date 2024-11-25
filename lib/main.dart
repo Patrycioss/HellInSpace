@@ -3,7 +3,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import 'bootstrap.dart';
-import 'game/game.dart';
+import 'hell_in_space_game.dart';
 
 void main() {
   Bloc.observer = AppBlocObserver();
