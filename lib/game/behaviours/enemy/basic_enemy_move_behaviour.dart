@@ -1,5 +1,3 @@
-import 'dart:developer' as dev;
-
 import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 

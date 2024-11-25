@@ -3,7 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 
 class HealthBar extends PositionComponent
-    with KeyboardHandler, FlameBlocListenable<PlayerBloc, PlayerState> {
+    with FlameBlocListenable<PlayerBloc, PlayerState> {
   static const double _gapBetweenHearts = 40;
   static const double _heartScale = 4;
 

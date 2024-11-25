@@ -2,11 +2,29 @@ import 'dart:developer';
 
 import 'package:dutch_game_studio_assessment/game/behaviours/enemy/random_direction_enemy_move_behaviour.dart';
 import 'package:dutch_game_studio_assessment/game/game.dart';
+import 'package:flutter/services.dart';
 
 class GameSettings {
-
   // Game
   static const int secondsToSurvive = 20;
+
+  // Input
+  static final Map<String, Set<LogicalKeyboardKey>> actionMap = {
+    'move_left': {LogicalKeyboardKey.keyA, LogicalKeyboardKey.arrowLeft},
+    'move_right': {LogicalKeyboardKey.keyD, LogicalKeyboardKey.arrowRight},
+    'move_up': {LogicalKeyboardKey.keyW, LogicalKeyboardKey.arrowUp},
+    'move_down': {LogicalKeyboardKey.keyS, LogicalKeyboardKey.arrowDown},
+    'increase_player_health': {LogicalKeyboardKey.add},
+    'decrease_player_health': {LogicalKeyboardKey.minus},
+  };
+
+  static final Set<LogicalKeyboardKey> additionalKeys = {
+    LogicalKeyboardKey.space,
+    LogicalKeyboardKey.keyR,
+    LogicalKeyboardKey.keyV,
+    LogicalKeyboardKey.add,
+    LogicalKeyboardKey.minus,
+  };
 
   // Sprites
   static const String spriteAtlasPath = "HellInSpaceTextures.atlas";

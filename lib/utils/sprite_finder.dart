@@ -3,7 +3,6 @@ import 'dart:developer' as dev;
 import 'package:flame_texturepacker/flame_texturepacker.dart';
 
 class SpriteFinder {
-
   static late final SpriteFinder _instance;
   static bool _instantiated = false;
 
@@ -29,8 +28,7 @@ class SpriteFinder {
     if (!_instantiated) {
       _instance = SpriteFinder._(texturePackerAtlas);
       _instantiated = true;
-    }
-    else {
+    } else {
       dev.log("Cannot create another instance of the Sprite Finder!");
     }
   }

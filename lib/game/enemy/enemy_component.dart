@@ -1,5 +1,4 @@
 import 'dart:async' as async;
-import 'dart:developer' as dev;
 
 import 'package:dutch_game_studio_assessment/game/component_pool.dart';
 import 'package:dutch_game_studio_assessment/game/game.dart';
@@ -83,7 +82,7 @@ class Enemy extends BodyComponent
   @override
   void reset() {
     removeFromParent();
-    removeAll(children);
+    // removeAll(children);
   }
 
   void destroy() {

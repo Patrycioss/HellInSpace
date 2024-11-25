@@ -1,14 +1,11 @@
-import 'dart:developer';
-
-import 'package:dutch_game_studio_assessment/game/mixins/has_hell_in_space_game_ref.dart';
 import 'package:dutch_game_studio_assessment/game/game.dart';
+
 import 'package:flame/components.dart';
 import 'package:flame/rendering.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/services.dart';
 
-class Player extends BodyComponent
-    with Steering, KeyboardHandler, HasHellInSpaceGameRef {
+class Player extends BodyComponent with Steering, HasHellInSpaceGameRef {
   final Map<LogicalKeyboardKey, bool> _pressedKeys = {
     LogicalKeyboardKey.keyW: false,
     LogicalKeyboardKey.keyA: false,
@@ -83,22 +80,15 @@ class Player extends BodyComponent
   }
 
   @override
-  bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    for (LogicalKeyboardKey key in _pressedKeys.keys) {
-      _pressedKeys[key] = keysPressed.contains(key);
-    }
+  void update(double dt) {
+    var input = hellInSpaceGameRef.inputManager;
 
-    if (keysPressed.contains(LogicalKeyboardKey.minus)) {
+    if (input.isKeyDown(LogicalKeyboardKey.minus)) {
       health--;
-    } else if (keysPressed.contains(LogicalKeyboardKey.add)) {
+    } else if (input.isKeyDown(LogicalKeyboardKey.add)) {
       health++;
     }
 
-    return super.onKeyEvent(event, keysPressed);
-  }
-
-  @override
-  void update(double dt) {
     _timeSinceLastHit += dt;
 
     if (_invincibilityActive) {
@@ -109,10 +99,10 @@ class Player extends BodyComponent
     }
 
     Vector2 direction = getSteeringDirection(
-      upPressed: _pressedKeys[LogicalKeyboardKey.keyW]!,
-      downPressed: _pressedKeys[LogicalKeyboardKey.keyS]!,
-      leftPressed: _pressedKeys[LogicalKeyboardKey.keyA]!,
-      rightPressed: _pressedKeys[LogicalKeyboardKey.keyD]!,
+      upPressed: input.isActionPressed("move_up"),
+      downPressed: input.isActionPressed("move_down"),
+      leftPressed: input.isActionPressed("move_left"),
+      rightPressed: input.isActionPressed("move_right"),
     );
 
     body.applyLinearImpulse(direction * GameSettings.playerMoveSpeed * dt);
@@ -127,7 +117,8 @@ class Player extends BodyComponent
       _invincibilityActive = true;
       _spriteComponent.enableInvincibilityEffect();
 
-      hellInSpaceGameRef.startScreenShake(GameSettings.invincibilityDuration.toInt());
+      hellInSpaceGameRef
+          .startScreenShake(GameSettings.invincibilityDuration.toInt());
 
       _timeSinceLastHit = 0;
     }
@@ -142,7 +133,8 @@ class _PlayerSpriteComponent extends SpriteAnimationComponent {
         );
 
   void enableInvincibilityEffect() {
-    decorator.addLast(PaintDecorator.tint(const Color.fromARGB(180, 255, 1, 1)));
+    decorator
+        .addLast(PaintDecorator.tint(const Color.fromARGB(180, 255, 1, 1)));
   }
 
   void disableInvincibilityEffect() {

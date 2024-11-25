@@ -1,7 +1,6 @@
 import 'package:dutch_game_studio_assessment/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/input.dart';
-import 'package:flame_forge2d/flame_forge2d.dart';
 
 class EndScreen extends SpriteComponent with HasHellInSpaceGameRef {
   final bool _hasWon;
@@ -11,7 +10,6 @@ class EndScreen extends SpriteComponent with HasHellInSpaceGameRef {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
 
     if (_hasWon) {
       sprite = SpriteFinder.get().findSprite("victory_screen");

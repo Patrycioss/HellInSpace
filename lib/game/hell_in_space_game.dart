@@ -1,30 +1,35 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:developer' as dev;
 
 import 'package:dutch_game_studio_assessment/game/end_game_checker.dart';
+import 'package:dutch_game_studio_assessment/input/input.dart';
 import 'package:flame/game.dart';
 import 'package:flame_bloc/flame_bloc.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flame/events.dart';
 import 'package:flame_texturepacker/flame_texturepacker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'end_screen.dart';
 import 'game.dart';
 
 class HellInSpaceGame extends Forge2DGame
     with HasKeyboardHandlerComponents, HasCollisionDetection, ScreenShaker {
-  late final PlayerBloc playerBloc;
-  late final EnemySpawner enemySpawner;
-  late final Player player;
-
-  final void Function() _onResetCallback;
-
+  final void Function() _onReplayCallback;
+  late final PlayerBloc _playerBloc;
+  late final EnemySpawner _enemySpawner;
+  late final Player _player;
   late final Timer _gameTimer;
+  late final InputManager _inputManager;
 
-  HellInSpaceGame(this._onResetCallback);
+  Player get player => _player;
+
+  PlayerBloc get playerBloc => _playerBloc;
+
+  HellInSpaceGame(this._onReplayCallback);
+
+  InputManager get inputManager => _inputManager;
 
   @override
   Future<void> onLoad() async {
@@ -38,18 +43,20 @@ class HellInSpaceGame extends Forge2DGame
     await add(FlameMultiBlocProvider(providers: [
       FlameBlocProvider<PlayerBloc, PlayerState>(
         create: () {
-          playerBloc = PlayerBloc();
+          _playerBloc = PlayerBloc();
           return playerBloc;
         },
       )
     ], children: [
-      enemySpawner = EnemySpawner(),
-      player = Player(
+      _enemySpawner = EnemySpawner(),
+      _player = Player(
         Vector2(50, 50),
         SpriteFinder.get().findSprites('player'),
       ),
       PlayerLossChecker(),
       HealthBar(Vector2(20, 20), SpriteFinder.get().findSprites('heart')),
+      _inputManager = InputManager(GameSettings.actionMap,
+          additionalKeys: GameSettings.additionalKeys),
     ]));
 
     _gameTimer = Timer(const Duration(seconds: GameSettings.secondsToSurvive),
@@ -82,6 +89,22 @@ class HellInSpaceGame extends Forge2DGame
   void update(double dt) {
     updateScreenShaker(dt);
 
+    if (kDebugMode) {
+      if (inputManager.isKeyPressed(LogicalKeyboardKey.space)) {
+        _enemySpawner.spawnEnemy();
+      }
+
+      if (inputManager.isKeyPressed(LogicalKeyboardKey.keyR)) {
+        dev.log("Resetting game!");
+        replay();
+      }
+
+      if (inputManager.isKeyPressed(LogicalKeyboardKey.keyV)) {
+        dev.log("Starting Screen Shake!");
+        startScreenShake(GameSettings.invincibilityDuration.toInt());
+      }
+    }
+
     // Vector2 translation = canvasSize / 2.0;
 
     // _worldTransformation.translate(translation.x, translation.y);
@@ -102,28 +125,8 @@ class HellInSpaceGame extends Forge2DGame
     super.render(canvas);
   }
 
-  @override
-  KeyEventResult onKeyEvent(
-      KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    if (keysPressed.contains(LogicalKeyboardKey.space)) {
-      enemySpawner.spawnEnemy();
-    }
-
-    if (keysPressed.contains(LogicalKeyboardKey.keyR)) {
-      dev.log("Resetting game!");
-      replay();
-    }
-
-    if (keysPressed.contains(LogicalKeyboardKey.keyV)) {
-      dev.log("Starting Screen Shake!");
-      startScreenShake(GameSettings.invincibilityDuration.toInt());
-    }
-
-    return super.onKeyEvent(event, keysPressed);
-  }
-
   void replay() {
-    _onResetCallback();
+    _onReplayCallback();
   }
 
   void _showEndScreen(bool hasWon) {
