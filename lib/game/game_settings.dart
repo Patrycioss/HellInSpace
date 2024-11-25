@@ -17,7 +17,6 @@ class GameSettings {
       "Big",
       strength: 3,
       moveSpeed: 800,
-      breaksOnAnyCollision: false,
       width: 30,
       height: 30,
       lifeTime: Duration(seconds: 8),

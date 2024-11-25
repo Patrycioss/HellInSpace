@@ -17,7 +17,7 @@ class EnemySettings {
     double? height,
   })  : lifeTime = lifeTime ?? const Duration(seconds: 10),
         moveSpeed = moveSpeed ?? 700,
-        breaksOnAnyCollision = breaksOnAnyCollision ?? true,
+        breaksOnAnyCollision = breaksOnAnyCollision ?? false,
         strength = strength ?? 1,
         width = width ?? 10,
         height = height ?? 10;

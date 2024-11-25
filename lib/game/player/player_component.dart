@@ -106,7 +106,6 @@ class Player extends BodyComponent
   }
 
   void hit(int strength) {
-    log("yep");
     health -= strength;
   }
 }

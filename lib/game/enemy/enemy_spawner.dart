@@ -22,11 +22,7 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
     hellInSpaceGame = gameRef as HellInSpaceGame;
   }
 
-  void spawnEnemy() {
-    add(_enemyPool.getComponent());
-  }
-
-  Enemy _createComponentCallback() {
+  Vector2 _decidePosition() {
     late Vector2 position;
     do {
       position = Vector2(_random.nextDouble() * gameRef.canvasSize.x,
@@ -34,6 +30,15 @@ class EnemySpawner extends Component with HasGameRef<Forge2DGame> {
     } while (position.distanceTo(hellInSpaceGame.player.position) <
         GameSettings.minimumSpawnDistance);
 
+    return position;
+  }
+
+  void spawnEnemy() {
+    add(_enemyPool.getComponent()..setPosition(_decidePosition()));
+  }
+
+  Enemy _createComponentCallback() {
+    final Vector2 position = _decidePosition();
     final int settingIndex =
         _random.nextInt(GameSettings.differentEnemySettings.length);
     final EnemySettings enemySettings =

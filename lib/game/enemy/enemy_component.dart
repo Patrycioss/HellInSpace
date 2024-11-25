@@ -1,4 +1,5 @@
 import 'dart:async' as async;
+import 'dart:developer' as dev;
 
 import 'package:dutch_game_studio_assessment/game/component_pool.dart';
 import 'package:dutch_game_studio_assessment/game/game.dart';
@@ -8,34 +9,37 @@ import 'package:flame_forge2d/flame_forge2d.dart';
 class Enemy extends BodyComponent
     with HasGameRef<Forge2DGame>, ContactCallbacks
     implements Resettable {
-  final Vector2 _position;
   final EnemySettings _settings;
   final EnemyMoveBehaviour _moveBehaviour;
   final void Function(Enemy enemy) _onDestroyCallback;
 
-  late final HellInSpaceGame _hellInSpaceGame;
+  late HellInSpaceGame _hellInSpaceGame;
+  late async.Timer _lifeTimeTimer;
+  Vector2 _startPosition;
 
-  late final async.Timer _lifeTimeTimer;
-
-  Enemy(this._position, this._settings, this._moveBehaviour,
+  Enemy(this._startPosition, this._settings, this._moveBehaviour,
       this._onDestroyCallback)
-      : super(renderBody: false, children: [
-          RectangleComponent(
-            size: Vector2(_settings.width, _settings.height),
-          )
-        ]);
+      : super(renderBody: false);
 
   @override
-  Future<void> onLoad() async {
-    await super.onLoad();
+  void onMount() {
+    super.onMount();
+    if (!world.physicsWorld.bodies.contains(body)){
+      body = createBody();
+    }
+
     _hellInSpaceGame = gameRef as HellInSpaceGame;
     _lifeTimeTimer = async.Timer(_settings.lifeTime, destroy);
+
+    add(RectangleComponent(
+      size: Vector2(_settings.width, _settings.height),
+    ));
   }
 
   @override
   void update(double dt) {
-    _moveBehaviour.handleMovement(dt, body, _hellInSpaceGame.player, _settings);
     super.update(dt);
+    _moveBehaviour.handleMovement(dt, body, _hellInSpaceGame.player, _settings);
   }
 
   @override
@@ -52,6 +56,8 @@ class Enemy extends BodyComponent
 
   @override
   Body createBody() {
+
+
     final shape = PolygonShape();
 
     shape.setAsBox(
@@ -62,7 +68,7 @@ class Enemy extends BodyComponent
       friction: 1.0,
     );
     final bodyDef = BodyDef(
-      position: _position,
+      position: _startPosition,
       type: BodyType.dynamic,
       linearDamping: 0.6,
       userData: this,
@@ -79,11 +85,15 @@ class Enemy extends BodyComponent
 
   @override
   void reset() {
-    _lifeTimeTimer.cancel();
     removeFromParent();
+    removeAll(children);
   }
 
   void destroy() {
     _onDestroyCallback(this);
+  }
+
+  setPosition(Vector2 decidePosition) {
+    _startPosition = decidePosition;
   }
 }

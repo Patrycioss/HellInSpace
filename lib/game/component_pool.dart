@@ -8,8 +8,6 @@ class ComponentPool<T extends Component> {
   final List<T> _componentsReady = [];
   final T Function() _createComponentCallback;
 
-  int _maxComponentCount = 200;
-
   ComponentPool(this._createComponentCallback);
 
   T getComponent() {
@@ -22,14 +20,8 @@ class ComponentPool<T extends Component> {
 
   int get componentsAvailable => _componentsReady.length;
 
-  void setMaxComponentCount(int count) {
-    _maxComponentCount = count;
-  }
-
   void returnComponent(T component) {
     (component as Resettable).reset();
-    if (_componentsReady.length < _maxComponentCount) {
-      _componentsReady.add(component);
-    }
+    _componentsReady.add(component);
   }
-}
+}}
