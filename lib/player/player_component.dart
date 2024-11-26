@@ -8,6 +8,7 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hell_in_space/sound/sound_helper.dart';
 
 import '../game_settings.dart';
 import '../mixins/has_hell_in_space_game_ref.dart';
@@ -51,7 +52,7 @@ class Player extends BodyComponent with _Steering, HasHellInSpaceGameRef {
     _animationComponent = children.first as SpriteAnimationComponent;
   }
 
-  void hit(int strength) {
+  Future<void> hit(int strength) async {
     if (_activeState.canBeHit) {
       _setState(
           _InvulnerablePlayerState(() => _setState(_RegularPlayerState())));
@@ -59,7 +60,7 @@ class Player extends BodyComponent with _Steering, HasHellInSpaceGameRef {
 
       hellInSpaceGameRef.startScreenShake(GameSettings.screenShakeDuration);
 
-      FlameAudio.play(GameSettings.hitSoundPath);
+      await SoundHelper.playSound(GameSettings.hitSoundPath);
 
       add(
         ParticleSystemComponent(

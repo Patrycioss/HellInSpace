@@ -10,6 +10,7 @@ import 'package:flame_texturepacker/flame_texturepacker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:hell_in_space/sound/sound_helper.dart';
 
 import 'behaviours/end_game_checker.dart';
 import 'ui_components/end_screen.dart';
@@ -83,16 +84,8 @@ class HellInSpaceGame extends Forge2DGame
     _gameTimer = Timer(GameSettings.timeToSurvive, _onGameTimerEnd);
 
     await _preloadAudio();
-
-    if (!audio.FlameAudio.bgm.isPlaying) {
-      try {
-        _playMusic();
-      }
-      catch(e){
-        dev.log("$e");
-        Timer(const Duration(seconds: 2), _playMusic);
-      }
-    }
+    
+    await SoundHelper.playMusic(GameSettings.musicPath, hasToStart: true, replacesOld: true, volume: 0.4);
   }
 
   @override
@@ -149,9 +142,5 @@ class HellInSpaceGame extends Forge2DGame
   Future<void> _preloadAudio() async {
     await audio.FlameAudio.audioCache.load('hit_sound.wav');
     await audio.FlameAudio.audioCache.load('music.mp3');
-  }
-
-  void _playMusic(){
-    audio.FlameAudio.bgm.play(GameSettings.musicPath, volume: 0.4);
   }
 }
