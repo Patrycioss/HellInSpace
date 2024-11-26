@@ -71,7 +71,7 @@ class HellInSpaceGame extends Forge2DGame
     ], children: [
       _enemySpawner = EnemySpawner(),
       _player = Player(
-        Vector2(50, 50),
+        canvasSize / 2.0,
         spriteFinder.findSprites('player'),
       ),
       PlayerLossChecker(),
@@ -80,18 +80,25 @@ class HellInSpaceGame extends Forge2DGame
           additionalKeys: GameSettings.additionalKeys),
     ]));
 
-    _gameTimer = Timer(const Duration(seconds: GameSettings.secondsToSurvive),
-        _onGameTimerEnd);
+    _gameTimer = Timer(GameSettings.timeToSurvive, _onGameTimerEnd);
 
     await _preloadAudio();
 
     if (!audio.FlameAudio.bgm.isPlaying) {
-      audio.FlameAudio.bgm.play(GameSettings.musicPath, volume: 0.4);
+      try {
+        _playMusic();
+      }
+      catch(e){
+        dev.log("$e");
+        Timer(const Duration(seconds: 2), _playMusic);
+      }
     }
   }
 
   @override
   void update(double dt) {
+
+
     updateScreenShaker(dt);
 
     if (kDebugMode) {
@@ -142,5 +149,9 @@ class HellInSpaceGame extends Forge2DGame
   Future<void> _preloadAudio() async {
     await audio.FlameAudio.audioCache.load('hit_sound.wav');
     await audio.FlameAudio.audioCache.load('music.mp3');
+  }
+
+  void _playMusic(){
+    audio.FlameAudio.bgm.play(GameSettings.musicPath, volume: 0.4);
   }
 }

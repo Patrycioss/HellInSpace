@@ -1,10 +1,10 @@
-import 'package:dutch_game_studio_assessment/utils/component_pool.dart';
-import 'package:dutch_game_studio_assessment/utils/random_generator.dart';
 import 'package:flame/components.dart';
 
 import '../behaviours/enemy/enemy_move_behaviour.dart';
 import '../game_settings.dart';
 import '../mixins/has_hell_in_space_game_ref.dart';
+import '../utils/component_pool.dart';
+import '../utils/random_generator.dart';
 import 'enemy_component.dart';
 import 'enemy_settings.dart';
 

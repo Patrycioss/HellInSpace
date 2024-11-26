@@ -9,7 +9,7 @@ import 'enemy/enemy_settings.dart';
 
 class GameSettings {
   // Game
-  static const int secondsToSurvive = 20;
+  static const Duration timeToSurvive = Duration(seconds: 30);
 
   // Audio
   static const String musicPath = "music.mp3";
