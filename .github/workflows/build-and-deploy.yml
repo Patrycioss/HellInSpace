@@ -28,11 +28,11 @@ jobs:
           channel: stable
           flutter-version: 3.24.5
 
-      # - name: Set Flutter Beta Channel
-      #   run: flutter channel beta
+      - name: Set Flutter Beta Channel
+        run: flutter channel beta
 
-      # - name: Upgrade Flutter
-      #   run: flutter upgrade
+      - name: Upgrade Flutter
+        run: flutter upgrade
 
       - name: Enable Flutter Web
         run: flutter config --enable-web
@@ -44,7 +44,7 @@ jobs:
         run: flutter create .
 
       - name: Build
-        run: flutter build web
+        run: flutter build web --release --base-href="/HellInSpace/" 
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
