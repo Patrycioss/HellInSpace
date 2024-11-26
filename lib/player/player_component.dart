@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flame/particles.dart';
 import 'package:flame/rendering.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

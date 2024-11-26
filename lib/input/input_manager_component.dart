@@ -111,5 +111,3 @@ class InputManager extends Component with KeyboardHandler {
     return super.onKeyEvent(event, keysPressed);
   }
 }
-
-

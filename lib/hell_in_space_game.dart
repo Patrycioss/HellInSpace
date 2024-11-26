@@ -84,14 +84,13 @@ class HellInSpaceGame extends Forge2DGame
     _gameTimer = Timer(GameSettings.timeToSurvive, _onGameTimerEnd);
 
     await _preloadAudio();
-    
-    await SoundHelper.playMusic(GameSettings.musicPath, hasToStart: true, replacesOld: true, volume: 0.4);
+
+    await SoundHelper.playMusic(GameSettings.musicPath,
+        hasToStart: true, replacesOld: true, volume: 0.4);
   }
 
   @override
   void update(double dt) {
-
-
     updateScreenShaker(dt);
 
     if (kDebugMode) {
